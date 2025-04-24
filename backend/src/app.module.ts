@@ -10,6 +10,7 @@ import { ProfileModule } from './profile/profile.module';
 import { RessourceModule } from './ressource/ressource.module';
 import { TodoModule } from './todo/todo.module';
 import { MembershipModule } from './membership/membership.module';
+import { SseModule } from './sse/sse.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -19,7 +20,7 @@ import { MembershipModule } from './membership/membership.module';
     imports: [ConfigModule],
     inject: [ConfigService],
     useFactory: typeOrmConfig,
-  }),UserModule, TeamModule, ProfileModule, RessourceModule, TodoModule, MembershipModule],
+  }),UserModule, TeamModule, ProfileModule, RessourceModule, TodoModule, MembershipModule, SseModule],
   controllers: [AppController],
   providers: [AppService],
 })
