@@ -1,5 +1,6 @@
 import { Timestamp } from "src/common/timestamp.entity";
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import { Column, Entity, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('profiles')
 export class Profile extends Timestamp{
@@ -15,5 +16,7 @@ export class Profile extends Timestamp{
     phone : string
     @Column()
     location : string
-    
+
+    @OneToOne(()=>User,user=>user.profile)
+    user : User
 }
