@@ -10,6 +10,6 @@ export class Todo extends Timestamp {
     task : string
     @Column({type:'enum',enum:TodoStatus,default:TodoStatus.PENDING})
     status : TodoStatus
-    @Column({type:Date})
+    @Column({type : 'date'})
     dueDate : Date
 }
