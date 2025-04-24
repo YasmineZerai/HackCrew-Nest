@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from 'config/typeorm.config';
 import { TeamModule } from './team/team.module';
 import { ProfileModule } from './profile/profile.module';
+import { RessourceModule } from './ressource/ressource.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -16,7 +17,7 @@ import { ProfileModule } from './profile/profile.module';
     imports: [ConfigModule],
     inject: [ConfigService],
     useFactory: typeOrmConfig,
-  }),UserModule, TeamModule, ProfileModule],
+  }),UserModule, TeamModule, ProfileModule, RessourceModule],
   controllers: [AppController],
   providers: [AppService],
 })
