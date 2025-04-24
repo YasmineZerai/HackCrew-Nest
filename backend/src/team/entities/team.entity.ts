@@ -1,5 +1,6 @@
 import { Timestamp } from "src/common/timestamp.entity";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Membership } from "src/membership/entities/membership.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('teams')
 export class Team extends Timestamp {
@@ -8,6 +9,9 @@ export class Team extends Timestamp {
     id : number;
     @Column()
     name : string;
+
+    @OneToMany(()=>Membership,memebership =>memebership.team)
+    memberships : Membership[];
 
 
 }
