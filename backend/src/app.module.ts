@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from 'config/typeorm.config';
+import { TeamModule } from './team/team.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -14,7 +15,7 @@ import { typeOrmConfig } from 'config/typeorm.config';
     imports: [ConfigModule],
     inject: [ConfigService],
     useFactory: typeOrmConfig,
-  }),UserModule],
+  }),UserModule, TeamModule],
   controllers: [AppController],
   providers: [AppService],
 })
