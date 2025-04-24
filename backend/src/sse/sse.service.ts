@@ -16,6 +16,19 @@ export class SseService {
           });
         });
       }
+    
+    notifyUser(userId: string, message: string,event:string) {
+        for (const client of this.clients) {
+          if (client.userId === userId ) {
+            client.subscriber.next({
+              event: event,
+              data: { message },
+            });
+          }
+        }
+      }
+
+    
 
 
 
