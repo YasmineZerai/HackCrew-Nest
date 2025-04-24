@@ -8,6 +8,7 @@ import { typeOrmConfig } from 'config/typeorm.config';
 import { TeamModule } from './team/team.module';
 import { ProfileModule } from './profile/profile.module';
 import { RessourceModule } from './ressource/ressource.module';
+import { TodoModule } from './todo/todo.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -17,7 +18,7 @@ import { RessourceModule } from './ressource/ressource.module';
     imports: [ConfigModule],
     inject: [ConfigService],
     useFactory: typeOrmConfig,
-  }),UserModule, TeamModule, ProfileModule, RessourceModule],
+  }),UserModule, TeamModule, ProfileModule, RessourceModule, TodoModule],
   controllers: [AppController],
   providers: [AppService],
 })
