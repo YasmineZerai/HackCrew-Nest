@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Team } from "./team.entity";
 
 @Entity('codes')
 export class Code {
@@ -6,4 +7,6 @@ export class Code {
     id : number
     @Column({type:'date'})
     expiresAt : Date
+    @OneToOne(()=>Team,team=>team.code)
+    team : Team
 }
