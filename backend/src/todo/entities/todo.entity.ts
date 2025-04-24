@@ -1,5 +1,6 @@
 import { Timestamp } from "src/common/timestamp.entity";
 import { TodoStatus } from "src/enum/todo-status.enum";
+import { Team } from "src/team/entities/team.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -15,4 +16,7 @@ export class Todo extends Timestamp {
     dueDate : Date
     @ManyToOne(()=>User,user=>user.todos)
     user : User
+
+    @ManyToOne(()=>Team,team=>team.todos)
+    team : Team
 }
