@@ -1,6 +1,7 @@
 import { Timestamp } from "src/common/timestamp.entity";
 import { TodoStatus } from "src/enum/todo-status.enum";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('todos')
 export class Todo extends Timestamp {
@@ -12,4 +13,6 @@ export class Todo extends Timestamp {
     status : TodoStatus
     @Column({type : 'date'})
     dueDate : Date
+    @ManyToOne(()=>User,user=>user.todos)
+    user : User
 }
