@@ -6,6 +6,7 @@ import { Profile } from 'src/profile/entities/profile.entity';
 import { Ressource } from 'src/ressource/entities/ressource.entity';
 import { Todo } from 'src/todo/entities/todo.entity';
 import { Code } from 'typeorm';
+import { Membership } from 'src/membership/entities/membership.entity';
 
 export const typeOrmConfig = (configService: ConfigService): TypeOrmModuleOptions => ({
   type: 'mysql',
@@ -14,7 +15,7 @@ export const typeOrmConfig = (configService: ConfigService): TypeOrmModuleOption
   username: configService.get<string>('DB_USERNAME'),
   password: configService.get<string>('DB_PASSWORD'),
   database: configService.get<string>('DB_NAME'),
-  entities: [User,Team,Profile,Ressource,Todo,Code],
+  entities: [User,Team,Profile,Ressource,Todo,Code,Membership],
   synchronize: false,
   migrationsRun:true,
   autoLoadEntities:true
