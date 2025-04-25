@@ -4,6 +4,7 @@ import { Todo } from "src/todo/entities/todo.entity";
 import {  Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Code } from "./code.entity";
 import { Ressource } from "src/ressource/entities/ressource.entity";
+import { Message } from "src/message/entities/message.entity";
 
 @Entity('teams')
 export class Team extends Timestamp {
@@ -25,6 +26,9 @@ export class Team extends Timestamp {
 
     @OneToMany(()=>Ressource,ressource=>ressource.team)
     ressources : Ressource[]
+
+    @OneToMany(()=>Message,message=>message.team)
+    messages : Message[]
 
 
 }
