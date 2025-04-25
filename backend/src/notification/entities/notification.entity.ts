@@ -7,7 +7,7 @@ import { Todo } from "src/todo/entities/todo.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('notification')
+@Entity('notifications')
 export class Notification extends Timestamp {
   @PrimaryGeneratedColumn()
   id: number;
