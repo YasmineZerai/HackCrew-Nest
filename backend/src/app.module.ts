@@ -11,6 +11,7 @@ import { RessourceModule } from './ressource/ressource.module';
 import { TodoModule } from './todo/todo.module';
 import { MembershipModule } from './membership/membership.module';
 import { SseModule } from './sse/sse.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -20,7 +21,7 @@ import { SseModule } from './sse/sse.module';
     imports: [ConfigModule],
     inject: [ConfigService],
     useFactory: typeOrmConfig,
-  }),UserModule, TeamModule, ProfileModule, RessourceModule, TodoModule, MembershipModule, SseModule],
+  }),UserModule, TeamModule, ProfileModule, RessourceModule, TodoModule, MembershipModule, SseModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
