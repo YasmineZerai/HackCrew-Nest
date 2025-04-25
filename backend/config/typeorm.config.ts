@@ -8,6 +8,7 @@ import { Todo } from 'src/todo/entities/todo.entity';
 import { Membership } from 'src/membership/entities/membership.entity';
 import { Code } from 'src/team/entities/code.entity';
 import { Notification } from 'src/notification/entities/notification.entity';
+import { Message } from 'src/message/entities/message.entity';
 
 export const typeOrmConfig = (configService: ConfigService): TypeOrmModuleOptions => ({
   type: 'mysql',
@@ -16,7 +17,7 @@ export const typeOrmConfig = (configService: ConfigService): TypeOrmModuleOption
   username: configService.get<string>('DB_USERNAME'),
   password: configService.get<string>('DB_PASSWORD'),
   database: configService.get<string>('DB_NAME'),
-  entities: [User,Team,Profile,Ressource,Todo,Code,Membership,Notification],
+  entities: [User,Team,Profile,Ressource,Todo,Code,Membership,Notification,Message],
   synchronize: true,
   dropSchema:true,
   autoLoadEntities:true
