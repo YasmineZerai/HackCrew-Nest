@@ -1,6 +1,7 @@
 import { profile } from "console";
 import { Timestamp } from "src/common/entities/timestamp.entity";
 import { Membership } from "src/membership/entities/membership.entity";
+import { Message } from "src/message/entities/message.entity";
 import { Notification } from "src/notification/entities/notification.entity";
 import { Profile } from "src/profile/entities/profile.entity";
 import { Ressource } from "src/ressource/entities/ressource.entity";
@@ -34,6 +35,9 @@ export class User extends Timestamp {
   ressources : Ressource[]
   @OneToMany(()=>Notification,notification=>notification.user)
   notifications : Notification []
+
+  @OneToMany(()=>Message,message=>message.sender)
+  messages : Message[]
 
 
 }

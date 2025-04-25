@@ -1,14 +1,18 @@
 import { Timestamp } from "src/common/entities/timestamp.entity";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('messages')
-export class Notification extends Timestamp {
+export class Message extends Timestamp {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   content : string
-  
+
+  @ManyToOne(()=>User,user=>user.messages)
+  sender : User
+
 
 
 }
