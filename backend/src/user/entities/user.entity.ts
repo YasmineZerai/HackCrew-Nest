@@ -1,5 +1,5 @@
 import { profile } from "console";
-import { Timestamp } from "src/common/timestamp.entity";
+import { Timestamp } from "src/common/entities/timestamp.entity";
 import { Membership } from "src/membership/entities/membership.entity";
 import { Profile } from "src/profile/entities/profile.entity";
 import { Ressource } from "src/ressource/entities/ressource.entity";

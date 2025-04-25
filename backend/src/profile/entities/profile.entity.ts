@@ -1,4 +1,4 @@
-import { Timestamp } from "src/common/timestamp.entity";
+import { Timestamp } from "src/common/entities/timestamp.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 

@@ -1,4 +1,4 @@
-import { Timestamp } from "src/common/timestamp.entity";
+import { Timestamp } from "src/common/entities/timestamp.entity";
 import { Membership } from "src/membership/entities/membership.entity";
 import { Todo } from "src/todo/entities/todo.entity";
 import {  Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";

@@ -1,4 +1,4 @@
-import { Timestamp } from "src/common/timestamp.entity";
+import { Timestamp } from "src/common/entities/timestamp.entity";
 import { TodoStatus } from "src/enum/todo-status.enum";
 import { Team } from "src/team/entities/team.entity";
 import { User } from "src/user/entities/user.entity";
