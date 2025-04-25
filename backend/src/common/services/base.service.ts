@@ -9,7 +9,7 @@ import {
     DeepPartial,
     FindOptionsWhere,
   } from 'typeorm';
-import { PublicEntity } from './public.entity';
+import { PublicEntity } from '../entities/public.entity';
   ;
   
   @Injectable()
