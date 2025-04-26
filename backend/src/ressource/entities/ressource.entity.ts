@@ -8,6 +8,8 @@ export class Ressource {
     @PrimaryGeneratedColumn()
     id:number
     @Column()
+    title : string
+    @Column()
     description : string
     @Column({nullable:true})
     link : string
