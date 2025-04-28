@@ -1,4 +1,14 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, IsDateString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+    IsDate,
+    IsDateString,
+    IsEnum,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+    Min,
+} from 'class-validator';
 import { TodoStatus } from 'src/enum/todo-status.enum';
 
 export class CreateTodoDto {
@@ -11,11 +21,17 @@ export class CreateTodoDto {
     status?: TodoStatus;
 
     @IsDateString()
+    @Type(() => Date)
     dueDate: Date;
 
-    @IsNotEmpty()
+    @IsNumber()
+    @Min(1)
+    @Type(() => Number)
     userId: number;
 
     @IsOptional()
+    @IsNumber()
+    @Min(1)
+    @Type(() => Number)
     teamId?: number;
 }
