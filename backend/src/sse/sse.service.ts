@@ -4,32 +4,27 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class SseService {
-    private clients : ConnectedClient[]=[]
+  private clients: ConnectedClient[] = [];
 
-    connect(userId: string): Observable<{ data: any; event?: string }> {
-        return new Observable((subscriber) => {
-          const client: ConnectedClient = { userId,subscriber };
-          this.clients.push(client);
-    
-          subscriber.add(() => {
-            this.clients = this.clients.filter(c => c !== client);
-          });
+  connect(userId: string): Observable<{ data: any; event?: string }> {
+    return new Observable((subscriber) => {
+      const client: ConnectedClient = { userId, subscriber };
+      this.clients.push(client);
+
+      subscriber.add(() => {
+        this.clients = this.clients.filter((c) => c !== client);
+      });
+    });
+  }
+
+  notifyUser(userId: string, message: string, event: string) {
+    for (const client of this.clients) {
+      if (client.userId === userId) {
+        client.subscriber.next({
+          event: event,
+          data: { message },
         });
       }
-    
-    notifyUser(userId: string, message: string,event:string) {
-        for (const client of this.clients) {
-          if (client.userId === userId ) {
-            client.subscriber.next({
-              event: event,
-              data: { message },
-            });
-          }
-        }
-      }
-
-    
-
-
-
+    }
+  }
 }
