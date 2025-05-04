@@ -5,34 +5,35 @@ import {
   Get,
   Param,
   UseGuards,
-  Req,
   UsePipes,
 } from '@nestjs/common';
 import { MessageService } from './message.service';
-// import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
 import {
   CreateMessageDto,
   CreateMessageSchema,
 } from '@src/core/zod-schemas/create-message.schema';
-import { Request } from 'express';
+import { MessageResponseDto } from './dto/message-response.dto';
 import { HttpZodPipe } from '@src/core/pipes/http-zod-validation.pipes';
+import { User } from '../user/entities/user.entity';
+import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 
 @Controller('messages')
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
   @Post()
   @UsePipes(new HttpZodPipe(CreateMessageSchema))
   async create(
-    @Use() req: Request,
+    @ConnectedUser() user: User,
     @Body() createMessageDto: CreateMessageDto,
   ): Promise<MessageResponseDto> {
     const message = await this.messageService.createMessage(
-      req.user,
+      user,
       createMessageDto,
     );
-    return;
+    return this.messageService.mapToResponseDto(message);
   }
 
   @Get('team/:teamId')

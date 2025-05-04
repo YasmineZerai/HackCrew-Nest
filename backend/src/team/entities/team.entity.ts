@@ -17,10 +17,11 @@ import { Message } from 'src/message/entities/message.entity';
 export class Team extends Timestamp {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   name: string;
 
-  @OneToMany(() => Membership, (memebership) => memebership.team)
+  @OneToMany(() => Membership, (membership) => membership.team)
   memberships: Membership[];
 
   @OneToMany(() => Todo, (todo) => todo.team)
