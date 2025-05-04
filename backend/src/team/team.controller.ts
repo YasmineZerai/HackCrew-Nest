@@ -1,19 +1,29 @@
-import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+} from '@nestjs/common';
 import { TeamService } from './team.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
 import { User } from '../user/entities/user.entity';
-import { GetUser } from '../auth/decorators/get-user.decorator';
+import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 
 @Controller('teams')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
   @Post()
   async createTeam(
-    @GetUser() user: User,
+    @ConnectedUser() user: User,
     @Body() createTeamDto: CreateTeamDto,
   ) {
     const team = await this.teamService.createTeam(user, createTeamDto);
@@ -24,19 +34,9 @@ export class TeamController {
     };
   }
 
-  @Post(':teamId/codes')
-  async createTeamCode(@GetUser() user: User, @Param('teamId') teamId: number) {
-    const code = await this.teamService.createTeamCode(teamId, user.id);
-    return {
-      success: true,
-      message: 'Code created successfully, this code lasts one hour',
-      payload: { code },
-    };
-  }
-
   @Post(':teamId/invitations')
   async inviteUser(
-    @GetUser() user: User,
+    @ConnectedUser() user: User,
     @Param('teamId') teamId: number,
     @Body() inviteUserDto: InviteUserDto,
   ) {
@@ -51,9 +51,35 @@ export class TeamController {
     };
   }
 
+  @Post(':teamId/codes')
+  async createTeamCode(
+    @ConnectedUser() user: User,
+    @Param('teamId') teamId: number,
+  ) {
+    const code = await this.teamService.createTeamCode(teamId, user.id);
+    return {
+      success: true,
+      message: 'Code generated successfully',
+      payload: { code },
+    };
+  }
+
+  @Get(':teamId/codes')
+  async getTeamCode(
+    @ConnectedUser() user: User,
+    @Param('teamId') teamId: number,
+  ) {
+    const code = await this.teamService.getTeamCode(teamId, user.id);
+    return {
+      success: true,
+      message: 'Code retrieved successfully',
+      payload: { code },
+    };
+  }
+
   @Get()
-  async getTeams(@GetUser() user: User) {
-    const teams = await this.teamService.findAll();
+  async getTeams(@ConnectedUser() user: User) {
+    const teams = await this.teamService.getTeamsByUserId(user.id);
     return {
       success: true,
       message: 'Teams fetched successfully',
@@ -62,8 +88,14 @@ export class TeamController {
   }
 
   @Get(':teamId')
-  async getTeam(@GetUser() user: User, @Param('teamId') teamId: number) {
+  async getTeam(@ConnectedUser() user: User, @Param('teamId') teamId: number) {
     const team = await this.teamService.findOne(teamId);
+    if (!team) {
+      return {
+        success: false,
+        message: 'Team not found',
+      };
+    }
     return {
       success: true,
       message: 'Team fetched successfully',
