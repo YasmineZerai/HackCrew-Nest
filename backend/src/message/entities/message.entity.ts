@@ -1,7 +1,7 @@
-import { Timestamp } from "src/common/entities/timestamp.entity";
-import { Team } from "src/team/entities/team.entity";
-import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Timestamp } from 'src/common/entities/timestamp.entity';
+import { Team } from 'src/team/entities/team.entity';
+import { User } from 'src/user/entities/user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('messages')
 export class Message extends Timestamp {
@@ -9,14 +9,11 @@ export class Message extends Timestamp {
   id: number;
 
   @Column()
-  content : string
+  content: string;
 
-  @ManyToOne(()=>User,user=>user.messages)
-  sender : User
+  @ManyToOne(() => User, (user) => user.messages)
+  sender: User;
 
-  @ManyToOne(()=>Team,team=>team.messages)
-  team : Team
-
-
-
+  @ManyToOne(() => Team, (team) => team.messages)
+  team: Team;
 }

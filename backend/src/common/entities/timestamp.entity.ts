@@ -1,4 +1,3 @@
-// src/common/entities/timestamp.entity.ts
 import { CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class Timestamp {
@@ -7,6 +6,7 @@ export abstract class Timestamp {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
   @DeleteDateColumn()
-  deletedAt : Date
+  deletedAt: Date;
 }
