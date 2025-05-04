@@ -68,6 +68,6 @@ export class TodoController {
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
-        await this.todoService.delete(id);
+        await this.todoService.remove(id);
     }
 }
