@@ -24,11 +24,6 @@ export class CreateTodoDto {
     @Type(() => Date)
     dueDate: Date;
 
-    @IsNumber()
-    @Min(1)
-    @Type(() => Number)
-    userId: number;
-
     @IsOptional()
     @IsNumber()
     @Min(1)
