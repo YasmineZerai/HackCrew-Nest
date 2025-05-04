@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { SessionService } from './session/session.service';
 
 @Injectable()
 export class SocketService {
+  private server: Server;
   constructor(private readonly sessionService: SessionService) {}
+  setServer(server: Server) {
+    this.server = server;
+  }
   handleConnection(client: Socket) {
     // try {
     //   const user = await this.sessionService.authenticate(client);

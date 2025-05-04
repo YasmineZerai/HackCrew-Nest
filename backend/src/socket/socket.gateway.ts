@@ -1,34 +1,83 @@
 import {
-  ConnectedSocket,
-  SubscribeMessage,
   WebSocketGateway,
-  WsException,
+  WebSocketServer,
+  OnGatewayInit,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  MessageBody,
+  ConnectedSocket,
 } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
-import { Socket } from 'socket.io';
+import { SessionService } from './session/session.service';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { WsExceptionFilter } from './socket.filters';
+import {
+  ChatMessage,
+  ChatMessageSchema,
+} from 'src/core/zod-schemas/chatMessage.schemas';
+import { WsZodPipe } from 'src/core/pipes/ws-zod-validation.pipes';
 
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
-export class SocketGateway {
-  constructor(private readonly socketService: SocketService) {}
+@UseFilters(new WsExceptionFilter())
+export class SocketGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  @WebSocketServer()
+  server: Server;
 
-  // async handleConnection(client: Socket) {
-  //   await this.socketService.handleConnection(client);
+  constructor(
+    private readonly socketService: SocketService,
+    private readonly sessionService: SessionService,
+  ) {}
+
+  afterInit(server: Server) {
+    this.socketService.setServer(server);
+    console.log('WebSocket Gateway initialized');
+  }
+
+  handleConnection(client: Socket) {
+    // try {
+    //   const user = this.sessionService.authenticate(client);
+    //   this.sessionService.registerSocket(client.id, user.id);
+    //   client.join(`user_${user.id}`);
+    //   client.emit('connection_success', { userId: user.id });
+    //   console.log(`Client connected: ${user.username} (${client.id})`);
+    // } catch (error) {
+    //   client.emit('auth_error', { message: 'Authentication failed' });
+    //   client.disconnect(true);
+    // }
+  }
+
+  handleDisconnect(client: Socket) {
+    const userId = this.sessionService.getUserId(client.id);
+    if (userId) {
+      this.sessionService.removeSocket(client.id);
+      console.log(`Client disconnected: ${userId} (${client.id})`);
+    }
+  }
+
+  // @SubscribeMessage('join_room')
+  // handleJoinRoom(
+  //   @ConnectedSocket() client: Socket,
+  //   @MessageBody() roomId: string,
+  // ) {
+  //   const userId = this.sessionService.getUserId(client.id);
+  //   return this.socketService.joinRoom(userId, client, roomId);
   // }
-
-  async handleDisconnect(client: Socket) {
-    this.socketService.handleDisconnection(client);
-  }
-
   @SubscribeMessage('send-message')
-  sendMessage() {
-    this.socketService.handleMessage();
-  }
-  @SubscribeMessage('ping')
-  ping(client: Socket) {
-    throw new WsException('Intentional error');
+  @UsePipes(new WsZodPipe(ChatMessageSchema))
+  sendMessageToTeam(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() message: ChatMessage,
+  ) {
+    console.log('Valid message received:', message);
+    // client.to(message.teamId).emit('new-message', message);
+    client.emit('message-ack', { status: 'received' });
   }
 }
