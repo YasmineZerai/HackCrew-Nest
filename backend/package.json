@@ -24,6 +24,7 @@
     "migration:revert": "npm run typeorm -- migration:revert -d src/config/typeorm.config.ts"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.6.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -37,10 +38,13 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "mysql2": "^3.14.0",
+    "nanoid": "^5.1.5",
+    "nodemailer": "^7.0.0",
+    "pug": "^3.0.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "socket.io": "^4.8.1",
-    "swagger": "^0.7.5",
+    "swagger": "^0.0.1",
     "typeorm": "^0.3.22",
     "zod": "^3.24.3"
   },
@@ -55,7 +59,9 @@
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.15.3",
+    "@types/nodemailer": "^6.4.17",
+    "@types/pug": "^2.0.10",
     "@types/supertest": "^6.0.2",
     "cross-env": "^7.0.3",
     "eslint": "^9.18.0",
