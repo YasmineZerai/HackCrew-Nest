@@ -42,16 +42,16 @@ export class SocketGateway
   }
 
   handleConnection(client: Socket) {
-    // try {
-    //   const user = this.sessionService.authenticate(client);
-    //   this.sessionService.registerSocket(client.id, user.id);
-    //   client.join(`user_${user.id}`);
-    //   client.emit('connection_success', { userId: user.id });
-    //   console.log(`Client connected: ${user.username} (${client.id})`);
-    // } catch (error) {
-    //   client.emit('auth_error', { message: 'Authentication failed' });
-    //   client.disconnect(true);
-    // }
+    try {
+      const user = this.sessionService.authenticate(client);
+      this.sessionService.registerSocket(client.id, user.id);
+      client.join(`user_${user.id}`);
+      client.emit('connection_success', { userId: user.id });
+      console.log(`Client connected: ${user.username} (${client.id})`);
+    } catch (error) {
+      client.emit('auth_error', { message: 'Authentication failed' });
+      client.disconnect(true);
+    }
   }
 
   handleDisconnect(client: Socket) {
