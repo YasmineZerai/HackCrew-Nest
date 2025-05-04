@@ -5,19 +5,20 @@ import {
   Get,
   Param,
   UseGuards,
-  Req,
   UsePipes,
 } from '@nestjs/common';
 import { MessageService } from './message.service';
+import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
+
 import {
   CreateMessageDto,
   CreateMessageSchema,
 } from '@src/core/zod-schemas/create-message.schema';
-import { Request } from 'express';
+import { MessageResponseDto } from './dto/message-response.dto';
 import { HttpZodPipe } from '@src/core/pipes/http-zod-validation.pipes';
 import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { User } from '@src/user/entities/user.entity';
-import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
+
 
 @Controller('messages')
 @UseGuards(JwtAuthGuard)
@@ -34,7 +35,9 @@ export class MessageController {
       user,
       createMessageDto,
     );
+
     return message;
+
   }
 
   @Get('team/:teamId')

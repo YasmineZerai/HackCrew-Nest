@@ -38,8 +38,7 @@ export class UserService extends GenericService<User> {
         ErrorHandler.conflict('User with this email already exists');
       }
 
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+      const hashedPassword = await this.hashPassword(createUserDto.password);
 
       return super.create({
         ...createUserDto,
@@ -53,9 +52,9 @@ export class UserService extends GenericService<User> {
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     try {
       if (updateUserDto.password) {
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(updateUserDto.password, salt);
-        updateUserDto.password = hashedPassword;
+        updateUserDto.password = await this.hashPassword(
+          updateUserDto.password,
+        );
       }
       return super.update(id, updateUserDto);
     } catch (error) {
@@ -78,5 +77,17 @@ export class UserService extends GenericService<User> {
     } catch (error) {
       ErrorHandler.handleError(error);
     }
+  }
+
+  async validatePassword(
+    plainPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(plainPassword, hashedPassword);
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt(10);
+    return bcrypt.hash(password, salt);
   }
 }
