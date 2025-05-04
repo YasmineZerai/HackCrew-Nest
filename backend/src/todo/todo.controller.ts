@@ -10,51 +10,43 @@ import {
     ParseIntPipe,
     HttpCode,
     HttpStatus,
+    UseGuards,
 } from '@nestjs/common';
 import { TodoService } from './entities/todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { Todo } from './entities/todo.entity';
+import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
+import { ConnectedUser } from '@src/auth/decorators/user.decorator';
+import { AuthUser } from '@src/auth/interfaces/auth.interface';
 
+@UseGuards(JwtAuthGuard)
 @Controller('todos')
 export class TodoController {
     constructor(private readonly todoService: TodoService) { }
 
     @Get()
-    async findAll(): Promise<Todo[]> {
-        return this.todoService.findAll();
-    }
-
-    @Get(':id')
-    async findOne(@Param('id', ParseIntPipe) id: number): Promise<Todo> {
-        const todo = await this.todoService.findOne(id);
-        if (!todo) {
-            throw new NotFoundException(`Todo with id ${id} not found`);
-        }
-        return todo;
-    }
-
-    @Get('user/:userId')
-    async findByUser(@Param('userId', ParseIntPipe) userId: number): Promise<Todo[]> {
+    async findUserTodos(@ConnectedUser('id') userId: number): Promise<Todo[]> {
         return this.todoService.findByUser(userId);
     }
 
     @Get('team/:teamId')
-    async findByTeam(@Param('teamId', ParseIntPipe) teamId: number): Promise<Todo[]> {
-        return this.todoService.findByTeam(teamId);
-    }
-
-    @Get('user/:userId/team/:teamId')
-    async findByUserAndTeam(
-        @Param('userId', ParseIntPipe) userId: number,
+    async findByTeam(
         @Param('teamId', ParseIntPipe) teamId: number,
+        @ConnectedUser('id') userId: number,
     ): Promise<Todo[]> {
         return this.todoService.findByUserAndTeam(userId, teamId);
     }
 
     @Post()
-    async create(@Body() createTodoDto: CreateTodoDto): Promise<Todo> {
-        return this.todoService.create(createTodoDto);
+    async create(
+        @Body() createTodoDto: CreateTodoDto,
+        @ConnectedUser() user: AuthUser,
+    ): Promise<Todo> {
+        return this.todoService.create({
+            ...createTodoDto,
+            user: { id: user.id },
+        });
     }
 
     @Patch(':id')
@@ -67,7 +59,9 @@ export class TodoController {
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    async delete(
+        @Param('id', ParseIntPipe) id: number,
+    ): Promise<void> {
         await this.todoService.remove(id);
     }
 }

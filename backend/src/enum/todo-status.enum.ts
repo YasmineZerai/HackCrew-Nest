@@ -1,5 +1,5 @@
 export enum TodoStatus {
-  PENDING = 'pending',
+  TODO = 'todo',
+  DOING = 'doing',
   DONE = 'done',
-  EXPIRED = 'expired',
 }
