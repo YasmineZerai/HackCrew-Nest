@@ -10,13 +10,14 @@ export class SocketService {
     this.server = server;
   }
   handleConnection(client: Socket) {
-    // try {
-    //   const user = await this.sessionService.authenticate(client);
-    //   this.sessionService.registerSocket(client.id, user.id);
-    // } catch (error) {
-    //   client.emit('auth_error', { message: error.message });
-    // }
-    const user = this.sessionService.authenticate(client);
+    try {
+      const user = this.sessionService.authenticate(client);
+      this.sessionService.registerSocket(client.id, user.id);
+
+      console.log('conncted');
+    } catch (error) {
+      client.emit('auth_error', { message: error.message });
+    }
   }
   handleDisconnection(client: Socket) {}
   handleMessage() {}

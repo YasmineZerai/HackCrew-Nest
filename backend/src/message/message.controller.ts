@@ -9,14 +9,16 @@ import {
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
+
 import {
   CreateMessageDto,
   CreateMessageSchema,
 } from '@src/core/zod-schemas/create-message.schema';
 import { MessageResponseDto } from './dto/message-response.dto';
 import { HttpZodPipe } from '@src/core/pipes/http-zod-validation.pipes';
-import { User } from '../user/entities/user.entity';
 import { ConnectedUser } from '@src/auth/decorators/user.decorator';
+import { User } from '@src/user/entities/user.entity';
+
 
 @Controller('messages')
 @UseGuards(JwtAuthGuard)
@@ -28,21 +30,19 @@ export class MessageController {
   async create(
     @ConnectedUser() user: User,
     @Body() createMessageDto: CreateMessageDto,
-  ): Promise<MessageResponseDto> {
+  ) {
     const message = await this.messageService.createMessage(
       user,
       createMessageDto,
     );
-    return this.messageService.mapToResponseDto(message);
+
+    return message;
+
   }
 
   @Get('team/:teamId')
-  async getTeamMessages(
-    @Param('teamId') teamId: number,
-  ): Promise<MessageResponseDto[]> {
+  async getTeamMessages(@Param('teamId') teamId: number) {
     const messages = await this.messageService.getTeamMessages(teamId);
-    return Promise.all(
-      messages.map((message) => this.messageService.mapToResponseDto(message)),
-    );
+    return messages;
   }
 }
