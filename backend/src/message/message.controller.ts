@@ -19,8 +19,7 @@ import { HttpZodPipe } from '@src/core/pipes/http-zod-validation.pipes';
 import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { User } from '@src/user/entities/user.entity';
 
-
-@Controller('messages')
+@Controller('/messages')
 @UseGuards(JwtAuthGuard)
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
@@ -31,13 +30,13 @@ export class MessageController {
     @ConnectedUser() user: User,
     @Body() createMessageDto: CreateMessageDto,
   ) {
+    console.log('yo');
     const message = await this.messageService.createMessage(
       user,
       createMessageDto,
     );
 
     return message;
-
   }
 
   @Get('team/:teamId')
