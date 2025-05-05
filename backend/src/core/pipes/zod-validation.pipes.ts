@@ -13,15 +13,16 @@ export class ZodPipe implements PipeTransform {
 
   transform(value: unknown, metadata: ArgumentMetadata) {
     try {
-      console.log('try');
-      return this.schema.parse(value);
+      if (metadata.type !== 'body') {
+        return value;
+      }
+      const result = this.schema.safeParse(value);
+      return result;
     } catch (error) {
-      console.log(error);
       const errors = error.errors.map((err: any) => ({
         field: err.path.join('.'),
         message: err.message,
       }));
-      console.log(errors);
       throw this.type == zodPipeType.WS
         ? new WsException(errors)
         : new BadRequestException(errors);
