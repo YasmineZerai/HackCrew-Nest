@@ -1,45 +1,47 @@
+// src/message/message.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
-
-import { User } from '../user/entities/user.entity';
-import { CreateMessageDto } from '@src/core/zod-schemas/create-message.schema';
-import { TeamService } from '../team/team.service';
-import { ErrorHandler } from '../common/utils/error-handler.util';
+import { GenericService } from '@src/common/services/generic.service';
+import { CreateMessageDto } from './dto/create-message.dto';
+import { User } from '@src/user/entities/user.entity';
+import { TeamService } from '@src/team/team.service';
 
 @Injectable()
-export class MessageService {
+export class MessageService extends GenericService<Message> {
   constructor(
     @InjectRepository(Message)
     private readonly messageRepository: Repository<Message>,
     private readonly teamService: TeamService,
-  ) {}
+  ) {
+    super(messageRepository, ['sender', 'team'], 'Message');
+  }
 
-  async createMessage(sender: User, createMessageDto: CreateMessageDto) {
-    try {
-      const team = await this.teamService.findOne(createMessageDto.teamId);
-      const message = this.messageRepository.create({
-        content: createMessageDto.content,
-        sender,
-        team,
-      });
-
-      return await this.messageRepository.save(message);
-    } catch (error) {
-      ErrorHandler.handleError(error);
-    }
+  async createMessage(
+    user: User,
+    createMessageDto: CreateMessageDto,
+  ): Promise<Message> {
+    const team = await this.teamService.findOne(createMessageDto.teamId);
+    return super.create({
+      ...createMessageDto,
+      sender: user,
+      team: team,
+    });
   }
 
   async getTeamMessages(teamId: number): Promise<Message[]> {
-    try {
-      return await this.messageRepository.find({
-        where: { team: { id: teamId } },
-        relations: ['sender', 'team'],
-        order: { createdAt: 'ASC' },
-      });
-    } catch (error) {
-      ErrorHandler.handleError(error);
-    }
+    return this.messageRepository.find({
+      where: { team: { id: teamId } },
+      relations: this.relations,
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async getUserMessages(userId: number): Promise<Message[]> {
+    return this.messageRepository.find({
+      where: { sender: { id: userId } },
+      relations: this.relations,
+    });
   }
 }
