@@ -53,9 +53,19 @@ export class TodoController {
     async update(
         @Param('id', ParseIntPipe) id: number,
         @Body() updateTodoDto: UpdateTodoDto,
+        @ConnectedUser('id') userId: number,
     ): Promise<Todo> {
-        return this.todoService.update(id, updateTodoDto);
+
+        const existingTodo = await this.todoService.findOne(id);
+        const updatedTodo = await this.todoService.update(id, updateTodoDto);
+
+        if (updateTodoDto.status && updateTodoDto.status !== existingTodo.status) {
+            await this.todoService.notifyTeamMembersIfNecessary(updatedTodo, updateTodoDto.status, userId);
+        }
+
+        return updatedTodo;
     }
+
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
