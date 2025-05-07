@@ -45,11 +45,10 @@ export class SocketGateway
     try {
       const user = this.sessionService.authenticate(client);
       this.sessionService.registerSocket(client.id, user.id);
-      client.join(`user_${user.id}`);
-      client.emit('connection_success', { userId: user.id });
+      this.sessionService.joinTeamsRooms(client, user);
       console.log(`Client connected: ${user.username} (${client.id})`);
     } catch (error) {
-      client.emit('auth_error', { message: 'Authentication failed' });
+      client.emit('auth_error', error);
       client.disconnect(true);
     }
   }
@@ -62,22 +61,17 @@ export class SocketGateway
     }
   }
 
-  // @SubscribeMessage('join_room')
-  // handleJoinRoom(
-  //   @ConnectedSocket() client: Socket,
-  //   @MessageBody() roomId: string,
-  // ) {
-  //   const userId = this.sessionService.getUserId(client.id);
-  //   return this.socketService.joinRoom(userId, client, roomId);
-  // }
   @SubscribeMessage('send-message')
   @UsePipes(new WsZodPipe(ChatMessageSchema))
   sendMessageToTeam(
     @ConnectedSocket() client: Socket,
     @MessageBody() message: ChatMessage,
   ) {
-    console.log('Valid message received:', message);
-    // client.to(message.teamId).emit('new-message', message);
-    client.emit('message-ack', { status: 'received' });
+    this.socketService.sendMessageToRoom({
+      client: client,
+      room: `team_${message.teamId}`,
+      message: message,
+      event: 'recieve-message',
+    });
   }
 }

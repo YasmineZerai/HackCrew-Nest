@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { SessionService } from './session/session.service';
+type sendMessageToRoomArgs = {
+  client: Socket;
+  room: string;
+  message: any;
+  event: string;
+};
 
 @Injectable()
 export class SocketService {
@@ -13,12 +19,12 @@ export class SocketService {
     try {
       const user = this.sessionService.authenticate(client);
       this.sessionService.registerSocket(client.id, user.id);
-
-      console.log('conncted');
     } catch (error) {
       client.emit('auth_error', { message: error.message });
     }
   }
-  handleDisconnection(client: Socket) {}
-  handleMessage() {}
+  handleDisconnection() {}
+  sendMessageToRoom({ client, room, message, event }: sendMessageToRoomArgs) {
+    client.to(room).emit(event, message);
+  }
 }
