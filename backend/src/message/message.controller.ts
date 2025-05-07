@@ -1,4 +1,3 @@
-/*
 import {
   Controller,
   Post,
@@ -41,8 +40,11 @@ export class MessageController {
   }
 
   @Get('teams/:teamId')
-  async getTeamMessages(@Param('teamId') teamId: number) {
-    const messages = await this.messageService.getTeamMessages(teamId);
+  async getTeamMessages(
+    @Param('teamId') teamId: number,
+    @ConnectedUser() user: User,
+  ) {
+    const messages = await this.messageService.getTeamMessages(user, teamId);
     return {
       success: true,
       message: 'messages fetched successfully',
@@ -50,4 +52,3 @@ export class MessageController {
     };
   }
 }
-*/

@@ -1,10 +1,8 @@
-// sockets.session.service.ts
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { WsException } from '@nestjs/websockets';
 import { JWT_SECRET } from '@src/auth/constants/constants';
 import { TeamService } from '@src/team/team.service';
-import { User } from '@src/user/entities/user.entity';
 import { Socket } from 'socket.io';
 
 interface UserSocket {
@@ -14,8 +12,8 @@ interface UserSocket {
 
 @Injectable()
 export class SessionService {
-  private connectedUsers: Map<string, string[]> = new Map();
-  private socketToUser: Map<string, string> = new Map();
+  private connectedUsers: Map<number, string[]> = new Map();
+  private socketToUser: Map<string, number> = new Map();
 
   constructor(
     private readonly jwtService: JwtService,
@@ -29,7 +27,6 @@ export class SessionService {
     }
 
     const payload = this.jwtService.verify(token, { secret: JWT_SECRET });
-    console.log(payload.user);
     if (!payload.sub) {
       throw new WsException('Invalid token');
     }
@@ -37,7 +34,7 @@ export class SessionService {
     return { id: payload.sub, username: payload.username };
   }
 
-  registerSocket(socketId: string, userId: string): void {
+  registerSocket(socketId: string, userId: number): void {
     this.socketToUser.set(socketId, userId);
 
     const userSockets = this.connectedUsers.get(userId) || [];
@@ -60,27 +57,30 @@ export class SessionService {
     }
   }
 
-  getUserId(socketId: string): string | undefined {
+  getUserId(socketId: string): number | undefined {
     return this.socketToUser.get(socketId);
   }
 
-  getUserSockets(userId: string): string[] {
+  getUserSockets(userId: number): string[] {
     return this.connectedUsers.get(userId) || [];
   }
 
-  isUserOnline(userId: string): boolean {
+  isUserOnline(userId: number): boolean {
     return this.connectedUsers.has(userId);
   }
+
+  joinRoom(client: Socket, room: string, data?: any) {
+    client.join(room);
+    client.to(room).emit('member-connected', data);
+  }
+
   async joinTeamsRooms(client: Socket, user: { id: number; username: string }) {
     const teams = await this.teamService.getTeamsByUserId(user.id);
     teams.map((team) => {
-      client.join(`team_${team.id}`);
-      client
-        .to(`team_${team.id}`)
-        .emit('member_connected', {
-          message: `${user.username} is connected`,
-          userId: user.id,
-        });
+      this.joinRoom(client, `team_${team.id}`, {
+        message: `${user.username} is connected`,
+        userId: user.id,
+      });
     });
   }
 }

@@ -1,5 +1,9 @@
-
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
@@ -30,12 +34,19 @@ export class MessageService extends GenericService<Message> {
     });
   }
 
-  async getTeamMessages(teamId: number): Promise<Message[]> {
-    return this.messageRepository.find({
-      where: { team: { id: teamId } },
-      relations: this.relations,
-      order: { createdAt: 'DESC' },
-    });
+  async getTeamMessages(user: User, teamId: number) {
+    const existingTeam = await this.teamService.findOne(teamId);
+    if (existingTeam) {
+      const userInTeam = this.teamService.isMember(existingTeam, user.id);
+      if (userInTeam) {
+        return this.messageRepository.find({
+          where: { team: { id: teamId } },
+          relations: this.relations,
+          order: { createdAt: 'DESC' },
+        });
+      }
+    }
+    throw new ForbiddenException();
   }
 
   async getUserMessages(userId: number): Promise<Message[]> {
@@ -45,4 +56,3 @@ export class MessageService extends GenericService<Message> {
     });
   }
 }
-*/
