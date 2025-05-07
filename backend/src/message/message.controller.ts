@@ -1,3 +1,4 @@
+/*
 import {
   Controller,
   Post,
@@ -49,3 +50,4 @@ export class MessageController {
     };
   }
 }
+*/
