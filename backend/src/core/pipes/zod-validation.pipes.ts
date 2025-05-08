@@ -17,7 +17,6 @@ export class ZodPipe implements PipeTransform {
     }
 
     const result = this.schema.safeParse(value);
-    console.log(result);
     if (!result.success) {
       const errors = result.error.errors.map((err) => ({
         field: err.path.join('.') || 'body',

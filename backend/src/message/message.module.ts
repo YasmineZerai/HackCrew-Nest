@@ -9,5 +9,6 @@ import { TeamModule } from '@src/team/team.module';
   imports: [TypeOrmModule.forFeature([Message]), TeamModule],
   controllers: [MessageController],
   providers: [MessageService],
+  exports: [MessageService],
 })
 export class MessageModule {}
