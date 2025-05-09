@@ -10,7 +10,7 @@ export class Todo extends Timestamp {
   id: number;
   @Column()
   task: string;
-  @Column({ type: 'enum', enum: TodoStatus, default: TodoStatus.PENDING })
+  @Column({ type: 'enum', enum: TodoStatus, default: TodoStatus.TODO })
   status: TodoStatus;
   @Column({ type: 'date' })
   dueDate: Date;
