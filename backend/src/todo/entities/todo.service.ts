@@ -3,12 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Todo } from './todo.entity';
 import { Repository } from 'typeorm';
 import { GenericService } from '@src/common/services/generic.service';
+import { TeamService } from '@src/team/team.service';
+import { SseService } from '@src/sse/sse.service';
+import { TodoStatus } from '@src/enum/todo-status.enum';
 
 @Injectable()
 export class TodoService extends GenericService<Todo> {
     constructor(
         @InjectRepository(Todo)
         private readonly todoRepo: Repository<Todo>,
+        private readonly teamService: TeamService,
+        private readonly sseService: SseService,
     ) {
         super(todoRepo);
     }
@@ -32,5 +37,30 @@ export class TodoService extends GenericService<Todo> {
                 team: { id: teamId },
             },
         });
+    }
+
+    async notifyTeamMembersIfNecessary(todo: Todo, status: TodoStatus, actorId: number) {
+        if (![TodoStatus.DOING, TodoStatus.DONE].includes(status) || !todo.team) return;
+
+        const team = await this.teamService.findOneBy(
+            { id: todo.team.id },
+            ['memberships', 'memberships.user'],
+        );
+
+        if (!team?.memberships) return;
+
+        const recipients = team.memberships
+            .map((m) => m.user.id)
+            .filter((id) => id !== actorId)
+            .map((id) => id.toString());
+
+        const message = `Todo "${todo.task}" status updated to "${status}".`;
+
+        this.sseService.notifyManyUsers(recipients, {
+            todoId: todo.id,
+            task: todo.task,
+            status,
+            message,
+        }, 'todo-status-updated');
     }
 }

@@ -27,4 +27,15 @@ export class SseService {
       }
     }
   }
+
+  notifyManyUsers(userIds: string[], data: any, event: string) {
+    for (const client of this.clients) {
+      if (userIds.includes(client.userId)) {
+        client.subscriber.next({
+          event,
+          data,
+        });
+      }
+    }
+  }
 }

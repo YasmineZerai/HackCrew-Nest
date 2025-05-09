@@ -1,4 +1,3 @@
-/*
 import {
   Controller,
   Post,
@@ -20,7 +19,6 @@ import { HttpZodPipe } from '@src/core/pipes/http-zod-validation.pipes';
 import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { User } from '@src/user/entities/user.entity';
 
-
 @Controller('messages')
 @UseGuards(JwtAuthGuard)
 export class MessageController {
@@ -28,23 +26,29 @@ export class MessageController {
 
   @Post()
   @UsePipes(new HttpZodPipe(CreateMessageSchema))
-  async create(
-    @ConnectedUser() user: User,
-    @Body() createMessageDto: CreateMessageDto,
-  ) {
+  async create(@Body() createMessageDto, @ConnectedUser() user: User) {
     const message = await this.messageService.createMessage(
       user,
-      createMessageDto,
+      createMessageDto.data,
     );
 
-    return message;
-
+    return {
+      success: true,
+      message: 'message created successfully',
+      payload: message,
+    };
   }
 
-  @Get('team/:teamId')
-  async getTeamMessages(@Param('teamId') teamId: number) {
-    const messages = await this.messageService.getTeamMessages(teamId);
-    return messages;
+  @Get('teams/:teamId')
+  async getTeamMessages(
+    @Param('teamId') teamId: number,
+    @ConnectedUser() user: User,
+  ) {
+    const messages = await this.messageService.getTeamMessages(user, teamId);
+    return {
+      success: true,
+      message: 'messages fetched successfully',
+      payload: messages,
+    };
   }
 }
-*/
