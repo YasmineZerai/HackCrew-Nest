@@ -3,17 +3,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Todo } from './todo.entity';
 import { Repository } from 'typeorm';
 import { GenericService } from '@src/common/services/generic.service';
+<<<<<<< HEAD
 import { TeamService } from '@src/team/team.service';
 import { SseService } from '@src/sse/sse.service';
 import { TodoStatus } from '@src/enum/todo-status.enum';
+=======
+>>>>>>> feature/auth
 
 @Injectable()
 export class TodoService extends GenericService<Todo> {
     constructor(
         @InjectRepository(Todo)
         private readonly todoRepo: Repository<Todo>,
+<<<<<<< HEAD
         private readonly teamService: TeamService,
         private readonly sseService: SseService,
+=======
+>>>>>>> feature/auth
     ) {
         super(todoRepo);
     }
@@ -38,6 +44,7 @@ export class TodoService extends GenericService<Todo> {
             },
         });
     }
+<<<<<<< HEAD
 
     async notifyTeamMembersIfNecessary(todo: Todo, status: TodoStatus, actorId: number) {
         if (![TodoStatus.DOING, TodoStatus.DONE].includes(status) || !todo.team) return;
@@ -63,4 +70,6 @@ export class TodoService extends GenericService<Todo> {
             message,
         }, 'todo-status-updated');
     }
+=======
+>>>>>>> feature/auth
 }

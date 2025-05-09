@@ -53,6 +53,7 @@ export class TodoController {
     async update(
         @Param('id', ParseIntPipe) id: number,
         @Body() updateTodoDto: UpdateTodoDto,
+<<<<<<< HEAD
         @ConnectedUser('id') userId: number,
     ): Promise<Todo> {
 
@@ -67,6 +68,12 @@ export class TodoController {
     }
 
 
+=======
+    ): Promise<Todo> {
+        return this.todoService.update(id, updateTodoDto);
+    }
+
+>>>>>>> feature/auth
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     async delete(
