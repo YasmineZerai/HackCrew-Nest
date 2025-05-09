@@ -36,9 +36,8 @@ export const typeOrmConfig = (
     Notification,
     Message,
   ],
-<<<<<<< HEAD
   // migrations: [join(__dirname, '../../migrations', '*.{ts,js}')],
-  synchronize: true,
+  synchronize: false,
   // logging: ['error', 'warn'],
   // logger: 'simple-console',
   // migrationsRun: false,
@@ -67,37 +66,5 @@ export const typeOrmConfig = (
 //   logging: ['error', 'warn'],
 //   logger: 'simple-console',
 // } as DataSourceOptions);
-=======
-  migrations: [join(__dirname, '../../migrations', '*.{ts,js}')],
-  synchronize: false,
-  logging: ['error', 'warn'],
-  logger: 'simple-console',
-  migrationsRun: false,
-});
-
-const dataSource = new DataSource({
-  type: 'mysql',
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  entities: [
-    User,
-    Team,
-    Profile,
-    Ressource,
-    Todo,
-    Code,
-    Membership,
-    Notification,
-    Message,
-  ],
-  migrations: [join(__dirname, '../../migrations', '*.{ts,js}')],
-  synchronize: false,
-  logging: ['error', 'warn'],
-  logger: 'simple-console',
-} as DataSourceOptions);
->>>>>>> feature/auth
 
 // export default dataSource;

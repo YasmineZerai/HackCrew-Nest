@@ -16,7 +16,6 @@ export class SocketService {
   setServer(server: Server) {
     this.server = server;
   }
-<<<<<<< HEAD
 
   async handleConnection(client: Socket) {
     try {
@@ -52,16 +51,5 @@ export class SocketService {
       return user;
     }
     return null;
-=======
-  handleConnection(client: Socket) {
-    try {
-      const user = this.sessionService.authenticate(client);
-      this.sessionService.registerSocket(client.id, user.id);
-
-      console.log('conncted');
-    } catch (error) {
-      client.emit('auth_error', { message: error.message });
-    }
->>>>>>> feature/auth
   }
 }
