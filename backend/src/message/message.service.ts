@@ -56,4 +56,3 @@ export class MessageService extends GenericService<Message> {
     });
   }
 }
-
