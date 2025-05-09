@@ -19,23 +19,34 @@ import { Todo } from './entities/todo.entity';
 import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
 import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { AuthUser } from '@src/auth/interfaces/auth.interface';
+import { Filter } from '@src/common/decorators/filter.decorator';
+import { TodoFilterDto } from './dto/filter-todo.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
 export class TodoController {
     constructor(private readonly todoService: TodoService) { }
 
-    @Get()
-    async findUserTodos(@ConnectedUser('id') userId: number): Promise<Todo[]> {
-        return this.todoService.findByUser(userId);
-    }
 
     @Get('team/:teamId')
-    async findByTeam(
+    async findByTeam(@Param('teamId', ParseIntPipe) teamId: number,
+        @Filter() filter: TodoFilterDto): Promise<Todo[]> {
+        return this.todoService.findByTeam(teamId, filter)
+    }
+
+    @Get('me')
+    async findUserTodos(@ConnectedUser('id') userId: number,
+        @Filter() filter: TodoFilterDto): Promise<Todo[]> {
+        return this.todoService.findByUser(userId, filter);
+    }
+
+    @Get('me/team/:teamId')
+    async findByUserTeam(
         @Param('teamId', ParseIntPipe) teamId: number,
         @ConnectedUser('id') userId: number,
+        @Filter() filter: TodoFilterDto
     ): Promise<Todo[]> {
-        return this.todoService.findByUserAndTeam(userId, teamId);
+        return this.todoService.findByUserAndTeam(userId, teamId, filter);
     }
 
     @Post()
