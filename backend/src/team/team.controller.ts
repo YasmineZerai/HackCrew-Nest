@@ -89,13 +89,7 @@ export class TeamController {
 
   @Get(':teamId')
   async getTeam(@ConnectedUser() user: User, @Param('teamId') teamId: number) {
-    const team = await this.teamService.findOne(teamId);
-    if (!team) {
-      return {
-        success: false,
-        message: 'Team not found',
-      };
-    }
+    const team = await this.teamService.findOneForUser(teamId, user.id);
     return {
       success: true,
       message: 'Team fetched successfully',
