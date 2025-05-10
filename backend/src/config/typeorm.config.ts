@@ -67,4 +67,4 @@ const dataSource = new DataSource({
   logger: 'simple-console',
 } as DataSourceOptions);
 
-// export default dataSource;
+export default dataSource;

@@ -6,6 +6,7 @@ import { ErrorHandler } from '@src/common/utils/error-handler.util';
 import { User } from '@src/user/entities/user.entity';
 import { Team } from '@src/team/entities/team.entity';
 import { TeamService } from '@src/team/team.service';
+import { SseService } from '@src/sse/sse.service';
 
 @Injectable()
 export class MembershipService {
@@ -14,6 +15,7 @@ export class MembershipService {
     private membershipRepo: Repository<Membership>,
     @Inject(forwardRef(() => TeamService))
     private teamService: TeamService,
+    private sseService: SseService,
   ) {}
 
   async joinTeamByCode(user: User, code: string): Promise<Team> {
@@ -25,18 +27,6 @@ export class MembershipService {
 
       const team = await this.teamService.findTeamByCode(codeNumber);
 
-      if (!team?.code) {
-        ErrorHandler.badRequest('Team code not found');
-      }
-
-      // Compare dates with proper time consideration
-      const now = new Date();
-      const expiresAt = new Date(team.code.expiresAt);
-
-      if (expiresAt.getTime() <= now.getTime()) {
-        ErrorHandler.badRequest('Team code has expired');
-      }
-
       const existingMembership = team.memberships?.find(
         (m) => m.user?.id === user.id,
       );
@@ -47,9 +37,10 @@ export class MembershipService {
 
       await this.joinTeam(user, team);
 
+      this.notifyTeamAboutNewMember(team, user);
+
       return team;
     } catch (error) {
-      console.error('Join team error:', error);
       ErrorHandler.handleError(error);
     }
   }
@@ -106,7 +97,9 @@ export class MembershipService {
       const team = await this.teamService.findOne(teamId);
 
       if (!this.teamService.isMember(team, userId)) {
-        ErrorHandler.unauthorized('Not authorized to view team members');
+        ErrorHandler.forbidden(
+          'You do not have permission to view team members',
+        );
       }
 
       const memberships = await this.membershipRepo.find({
@@ -118,5 +111,32 @@ export class MembershipService {
     } catch (error) {
       ErrorHandler.handleError(error);
     }
+  }
+
+  private notifyTeamAboutNewMember(team: Team, newUser: User): void {
+    // Get all team members' IDs except the new member
+    const memberIds = team.memberships
+      .filter((membership) => membership.user.id !== newUser.id)
+      .map((membership) => membership.user.id.toString());
+
+    if (memberIds.length === 0) return;
+
+    const notificationData = {
+      team: {
+        id: team.id,
+        name: team.name,
+      },
+      user: {
+        id: newUser.id,
+        name: newUser.username,
+      },
+    };
+
+    // Send notifications to other team members
+    this.sseService.notifyManyUsers(
+      memberIds,
+      notificationData,
+      'team-member-joined',
+    );
   }
 }

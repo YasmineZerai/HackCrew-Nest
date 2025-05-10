@@ -5,8 +5,13 @@ import { Team } from './team.entity';
 export class Code {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column({ type: 'date' })
+
+  @Column({ type: 'timestamp' })
   expiresAt: Date;
+
+  @Column({ default: false })
+  isExpired: boolean;
+
   @OneToOne(() => Team, (team) => team.code)
   team: Team;
 }
