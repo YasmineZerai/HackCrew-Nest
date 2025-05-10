@@ -6,6 +6,7 @@ import { GenericService } from '@src/common/services/generic.service';
 import { TeamService } from '@src/team/team.service';
 import { SseService } from '@src/sse/sse.service';
 import { TodoStatus } from '@src/enum/todo-status.enum';
+import { TodoFilterDto } from '../dto/filter-todo.dto';
 
 @Injectable()
 export class TodoService extends GenericService<Todo> {
@@ -18,23 +19,24 @@ export class TodoService extends GenericService<Todo> {
         super(todoRepo);
     }
 
-    async findByUser(userId: number): Promise<Todo[]> {
+    async findByUser(userId: number, filter: TodoFilterDto): Promise<Todo[]> {
         return this.todoRepo.find({
-            where: { user: { id: userId } },
+            where: { user: { id: userId }, ...filter },
         });
     }
 
-    async findByTeam(teamId: number): Promise<Todo[]> {
+    async findByTeam(teamId: number, filter): Promise<Todo[]> {
         return this.todoRepo.find({
-            where: { team: { id: teamId } },
+            where: { team: { id: teamId }, ...filter },
         });
     }
 
-    async findByUserAndTeam(userId: number, teamId: number): Promise<Todo[]> {
+    async findByUserAndTeam(userId: number, teamId: number, filter: TodoFilterDto): Promise<Todo[]> {
         return this.todoRepo.find({
             where: {
                 user: { id: userId },
                 team: { id: teamId },
+                ...filter
             },
         });
     }
