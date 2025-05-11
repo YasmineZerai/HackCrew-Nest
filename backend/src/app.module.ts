@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { NotificationModule } from './notification/notification.module';
 import { MessageModule } from './message/message.module';
 import { SocketModule } from './socket/socket.module';
+import { SwaggerModule } from './swagger/swagger.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SocketModule } from './socket/socket.module';
         typeOrmConfig(configService),
       inject: [ConfigService],
     }),
+    SwaggerModule,
     UserModule,
     TeamModule,
     ProfileModule,

@@ -12,12 +12,14 @@ import {
 import { Code } from './code.entity';
 import { Ressource } from 'src/ressource/entities/ressource.entity';
 import { Message } from 'src/message/entities/message.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('teams')
 export class Team extends Timestamp {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
-
+  @ApiProperty()
   @Column()
   name: string;
 
