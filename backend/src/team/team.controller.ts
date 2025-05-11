@@ -16,7 +16,12 @@ import { User } from '../user/entities/user.entity';
 import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { Team } from './entities/team.entity';
-import { CreateTeamResponseDto } from './dto/create-team.response.dto';
+import { CreateTeamResponseDto } from './response/create-team.response.dto';
+import { SuccessMessageResponse } from './response/team-invitation.response';
+import { CreateTeamCodeResponseDto } from './response/code-generation.response';
+import { getCodeResponse } from './response/get-code.response';
+import { getTeamResponse } from './response/get-team.response';
+import { TeamResponse } from './response/team.response';
 
 @Controller('teams')
 @UseGuards(JwtAuthGuard)
@@ -44,6 +49,7 @@ export class TeamController {
   }
 
   @Post(':teamId/invitations')
+  @ApiResponse({type:SuccessMessageResponse})
   async inviteUser(
     @ConnectedUser() user: User,
     @Param('teamId') teamId: number,
@@ -61,6 +67,7 @@ export class TeamController {
   }
 
   @Post(':teamId/codes')
+  @ApiResponse({type:CreateTeamCodeResponseDto})
   async createTeamCode(
     @ConnectedUser() user: User,
     @Param('teamId') teamId: number,
@@ -74,6 +81,8 @@ export class TeamController {
   }
 
   @Get(':teamId/codes')
+  @ApiResponse({type:getCodeResponse})
+
   async getTeamCode(
     @ConnectedUser() user: User,
     @Param('teamId') teamId: number,
@@ -87,6 +96,7 @@ export class TeamController {
   }
 
   @Get()
+  @ApiResponse({type:getTeamResponse})
   async getTeams(@ConnectedUser() user: User) {
     const teams = await this.teamService.getTeamsByUserId(user.id);
     return {
@@ -97,6 +107,7 @@ export class TeamController {
   }
 
   @Get(':teamId')
+  @ApiResponse({type:TeamResponse})
   async getTeam(@ConnectedUser() user: User, @Param('teamId') teamId: number) {
     const team = await this.teamService.findOneForUser(teamId, user.id);
     return {
