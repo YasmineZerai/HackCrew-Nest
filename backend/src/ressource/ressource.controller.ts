@@ -16,12 +16,17 @@ import { UpdateRessourceDto } from './dto/update-ressource.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
+import { Ressource } from './entities/ressource.entity';
 
 @Controller('ressources')
 export class RessourcesController {
   constructor(private readonly ressourcesService: RessourcesService) {}
 
   @Post()
+  @ApiConsumes('multipart/form-data')
+  @ApiResponse({type:Ressource})
+
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
