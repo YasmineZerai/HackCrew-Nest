@@ -16,7 +16,7 @@ import { UpdateRessourceDto } from './dto/update-ressource.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOkResponse, ApiProduces, ApiResponse } from '@nestjs/swagger';
 import { Ressource } from './entities/ressource.entity';
 
 @Controller('ressources')
@@ -61,6 +61,18 @@ export class RessourcesController {
   }
 
   @Get(':id/file')
+  @ApiOkResponse({
+  description: 'Returns the requested file',
+  content: {
+    'application/octet-stream': {
+      schema: {
+        type: 'string',
+        format: 'binary',
+      },
+    },
+  },
+})
+@ApiProduces('application/octet-stream')
   async getFile(@Param('id') id: string) {
     const fileStream = await this.ressourcesService.getFileStream(+id);
     return new StreamableFile(fileStream);
