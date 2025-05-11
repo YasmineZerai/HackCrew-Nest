@@ -21,6 +21,7 @@ import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { AuthUser } from '@src/auth/interfaces/auth.interface';
 import { Filter } from '@src/common/decorators/filter.decorator';
 import { TodoFilterDto } from './dto/filter-todo.dto';
+import { ApiResponse } from '@nestjs/swagger';
 
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
@@ -29,6 +30,7 @@ export class TodoController {
 
 
     @Get('team/:teamId')
+    @ApiResponse({type:[Todo]})
     async findByTeam(@Param('teamId', ParseIntPipe) teamId: number,
         @Filter() filter: TodoFilterDto): Promise<Todo[]> {
         return this.todoService.findByTeam(teamId, filter)
