@@ -66,6 +66,7 @@ export class TodoController {
     }
 
     @Patch(':id')
+    @ApiResponse({type:Todo})
     async update(
         @Param('id', ParseIntPipe) id: number,
         @Body() updateTodoDto: UpdateTodoDto,
