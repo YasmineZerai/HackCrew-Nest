@@ -85,6 +85,7 @@ export class TodoController {
 
 
     @Delete(':id')
+    @ApiResponse({type:Todo})
     @HttpCode(HttpStatus.NO_CONTENT)
     async delete(
         @Param('id', ParseIntPipe) id: number,
