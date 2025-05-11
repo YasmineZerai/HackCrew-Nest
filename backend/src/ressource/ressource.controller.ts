@@ -49,11 +49,13 @@ export class RessourcesController {
   }
 
   @Get()
+  @ApiResponse({type:[Ressource]})
   findAll() {
     return this.ressourcesService.findAll();
   }
 
   @Get(':id')
+  @ApiResponse({type:Ressource})
   findOne(@Param('id') id: string) {
     return this.ressourcesService.findOne(+id);
   }
