@@ -21,6 +21,7 @@ import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { string } from 'zod';
 import passport from 'passport';
 import { LoginResponseDto } from './documentation/login.response';
+import { UserResponseDto } from './documentation/register.response';
 
 @Controller('auth')
 export class AuthController {
@@ -43,6 +44,17 @@ export class AuthController {
   }
 
   @Post('register')
+  @ApiBody({schema:{
+    type:'object',
+    properties:{
+      email:{type:'string',example:'test@email.com'},
+      password:{type:'string',example:'password'},
+      username:{type:'string',example:'test'},
+
+
+    }
+  }})
+  @ApiResponse({type:UserResponseDto})
   @UsePipes(new HttpZodPipe(RegisterSchema))
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
