@@ -22,6 +22,7 @@ import { string } from 'zod';
 import passport from 'passport';
 import { LoginResponseDto } from './documentation/login.response';
 import { UserResponseDto } from './documentation/register.response';
+import { LogoutResponseDto } from './documentation/logout.response';
 
 @Controller('auth')
 export class AuthController {
@@ -62,6 +63,7 @@ export class AuthController {
 
   // @UseGuards(JwtAuthGuard)
   @Post('logout')
+  @ApiResponse({type:LogoutResponseDto})
   @HttpCode(HttpStatus.OK)
   async logout(@Request() req) {
     const token = req.headers.authorization?.split(' ')[1];
