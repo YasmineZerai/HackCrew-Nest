@@ -17,12 +17,25 @@ import {
   RegisterSchema,
 } from '@src/core/zod-schemas/auth.schema';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { string } from 'zod';
+import passport from 'passport';
+import { LoginResponseDto } from './documentation/login.response';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @ApiBody({schema:{
+    type:'object',
+    properties:{
+      email:{type:'string',example:'test@email.com'},
+      password:{type:'string',example:'password'},
+
+    }
+  }})
+  @ApiResponse({type:LoginResponseDto})
   @UsePipes(new HttpZodPipe(LoginSchema))
   async login(@Body() loginDto: LoginDto) {
     const user = { email: loginDto.email, password: loginDto.password };
