@@ -37,6 +37,7 @@ export class TodoController {
     }
 
     @Get('me')
+    @ApiResponse({type:[Todo]})
     async findUserTodos(@ConnectedUser('id') userId: number,
         @Filter() filter: TodoFilterDto): Promise<Todo[]> {
         return this.todoService.findByUser(userId, filter);
