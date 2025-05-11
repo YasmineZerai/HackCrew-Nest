@@ -80,6 +80,26 @@ export class RessourcesController {
   }
 
   @Put(':id')
+  @ApiResponse({type:Ressource})
+  @ApiConsumes('multipart/form-data')
+   @ApiBody({
+    description: 'Form data for ressource',
+    schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', description: 'Ressource title' },
+        description: { type: 'string', description: 'Ressource description' },
+
+        
+        
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'The uploaded file',
+        },
+      },
+    },
+  })  
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
