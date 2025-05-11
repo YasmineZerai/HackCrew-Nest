@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  
   StreamableFile,
   UploadedFile,
   UseInterceptors,
@@ -102,6 +103,7 @@ export class RessourcesController {
   }
 
   @Delete(':id')
+  @ApiResponse({type:Ressource})
   remove(@Param('id') id: string) {
     return this.ressourcesService.remove(+id);
   }
