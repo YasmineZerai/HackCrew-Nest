@@ -47,6 +47,15 @@ export class MembershipController {
   }
 
   @Delete('teams/:teamId/members')
+  @ApiResponse({schema:{
+    type:'object',
+    properties:{
+      success:{type:'boolean',example:true},
+      message: {type:'string',example:'Successfully left the team'}
+
+
+    }
+  }})
   async leaveTeam(
     @ConnectedUser() user: User,
     @Param('teamId') teamId: number,
