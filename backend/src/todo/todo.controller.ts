@@ -54,6 +54,7 @@ export class TodoController {
     }
 
     @Post()
+    @ApiResponse({type:Todo})
     async create(
         @Body() createTodoDto: CreateTodoDto,
         @ConnectedUser() user: AuthUser,
