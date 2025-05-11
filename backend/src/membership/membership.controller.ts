@@ -16,6 +16,7 @@ import { zodPipeType } from '@src/core/enums/enum';
 import { JoinTeamDto, JoinTeamSchema } from './dto/join-team.dto';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { JoinTeamResponseDto } from './documentation/join-team.response';
+import { GetTeamMembersResponseDto } from './documentation/team-members.response';
 
 @Controller()
 @UseGuards(JwtAuthGuard)
@@ -68,6 +69,7 @@ export class MembershipController {
   }
 
   @Get('teams/:teamId/members')
+  @ApiResponse({type:GetTeamMembersResponseDto})
   async getTeamMembers(
     @ConnectedUser() user: User,
     @Param('teamId') teamId: number,
