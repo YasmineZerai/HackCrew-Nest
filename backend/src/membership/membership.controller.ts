@@ -14,6 +14,8 @@ import { User } from '@src/user/entities/user.entity';
 import { ZodPipe } from '@src/core/pipes/zod-validation.pipes';
 import { zodPipeType } from '@src/core/enums/enum';
 import { JoinTeamDto, JoinTeamSchema } from './dto/join-team.dto';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { JoinTeamResponseDto } from './documentation/join-team.response';
 
 @Controller()
 @UseGuards(JwtAuthGuard)
@@ -21,6 +23,13 @@ export class MembershipController {
   constructor(private readonly membershipService: MembershipService) {}
 
   @Post('members')
+  @ApiBody({schema:{
+    type:'object',
+    properties:{
+      code:{type:'string',example:'xxx'},
+    }
+  }})
+  @ApiResponse({type:JoinTeamResponseDto})
   async joinTeam(
     @ConnectedUser() user: User,
     @Body(new ZodPipe(JoinTeamSchema, zodPipeType.HTTP))
