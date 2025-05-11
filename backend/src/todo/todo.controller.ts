@@ -44,6 +44,7 @@ export class TodoController {
     }
 
     @Get('me/team/:teamId')
+    @ApiResponse({type:[Todo]})
     async findByUserTeam(
         @Param('teamId', ParseIntPipe) teamId: number,
         @ConnectedUser('id') userId: number,
