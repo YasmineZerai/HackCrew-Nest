@@ -14,14 +14,23 @@ import { InviteUserDto } from './dto/invite-user.dto';
 import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
 import { User } from '../user/entities/user.entity';
 import { ConnectedUser } from '@src/auth/decorators/user.decorator';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { Team } from './entities/team.entity';
+import { CreateTeamResponseDto } from './dto/create-team.response.dto';
 
 @Controller('teams')
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth('JWT-auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
   @Post()
+  @ApiResponse({
+    type: CreateTeamResponseDto,
+    status: 201,
+    description: 'Team successfully created',
+  })
   async createTeam(
     @ConnectedUser() user: User,
     @Body() createTeamDto: CreateTeamDto,
