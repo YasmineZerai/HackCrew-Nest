@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Request,
-  UsePipes,
-} from '@nestjs/common';
+import { Controller, Post, Body, UsePipes } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { HttpZodPipe } from '@src/core/pipes/http-zod-validation.pipes';
 import {
