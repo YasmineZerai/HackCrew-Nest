@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   Repository,
   DeepPartial,
@@ -67,5 +67,12 @@ export class GenericService<T extends ObjectLiteral & PublicEntity> {
     } catch (error) {
       ErrorHandler.handleError(error);
     }
+  }
+  async findByCriteria(criteria:any){
+    const entity=this.repository.find(criteria)
+    if(!entity){
+      throw new NotFoundException('entity not found')
+    }
+    return entity
   }
 }
