@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Timestamp } from 'src/common/entities/timestamp.entity';
 import { Membership } from 'src/membership/entities/membership.entity';
@@ -17,15 +18,16 @@ import {
 
 @Entity('users')
 export class User extends Timestamp {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
-
+  @ApiProperty()
   @Column()
   username: string;
-
+  @ApiProperty()
   @Column()
   email: string;
-
+  @ApiProperty()
   @Column()
   @Exclude()
   password: string;

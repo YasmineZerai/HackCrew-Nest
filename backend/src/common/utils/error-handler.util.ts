@@ -5,6 +5,7 @@ import {
   NotFoundException,
   UnauthorizedException,
   HttpException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 
@@ -50,6 +51,10 @@ export class ErrorHandler {
 
   static unauthorized(message: string): never {
     throw new UnauthorizedException(message);
+  }
+
+  static forbidden(message: string): never {
+    throw new ForbiddenException(message);
   }
 
   static internalServerError(message?: string): never {

@@ -12,6 +12,8 @@ import { User } from '@src/user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
+  private tokenBlacklist: Set<string> = new Set();
+
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
@@ -65,5 +67,13 @@ export class AuthService {
   async register(registerDto: RegisterDto): Promise<UserResponse> {
     const user = await this.usersService.create(registerDto);
     return instanceToPlain(user) as UserResponse;
+  }
+
+  async logout(token: string): Promise<void> {
+    this.tokenBlacklist.add(token);
+  }
+
+  isTokenBlacklisted(token: string): boolean {
+    return this.tokenBlacklist.has(token);
   }
 }

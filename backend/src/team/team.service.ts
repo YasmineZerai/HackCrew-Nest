@@ -70,25 +70,34 @@ export class TeamService extends GenericService<Team> {
       const team = await this.findOne(teamId);
 
       if (!this.isMember(team, userId)) {
-        ErrorHandler.unauthorized(
-          'Not authorized to create code for this team',
+        ErrorHandler.forbidden(
+          'You do not have permission to create code for this team',
         );
       }
 
       if (team.code) {
-        ErrorHandler.conflict('Team already has a code');
+        // Check if existing code is expired
+        const isExpired = await this.checkAndHandleExpiredCode(
+          team.code,
+          false,
+        );
+
+        if (!isExpired) {
+          ErrorHandler.conflict('Team already has an active code');
+        }
       }
 
       // Generate a numeric code between 100000 and 999999
       const codeId = Math.floor(100000 + Math.random() * 900000);
 
-      // Set expiration to exactly 24 hours from now
+      // Set expiration to exactly 1 hour from now
       const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 24);
+      expiresAt.setHours(expiresAt.getHours() + 1);
 
       const code = this.codeRepo.create({
         id: codeId,
         expiresAt,
+        isExpired: false,
         team,
       });
 
@@ -114,12 +123,17 @@ export class TeamService extends GenericService<Team> {
       const team = await this.findOne(teamId);
 
       if (!this.isMember(team, userId)) {
-        ErrorHandler.unauthorized('Not authorized to view this team code');
+        ErrorHandler.forbidden(
+          'You do not have permission to view this team code',
+        );
       }
 
       if (!team.code) {
         ErrorHandler.notFound('No code found for this team');
       }
+
+      // Check if the code is expired
+      await this.checkAndHandleExpiredCode(team.code, true);
 
       return team.code;
     } catch (error) {
@@ -135,7 +149,18 @@ export class TeamService extends GenericService<Team> {
     try {
       const team = await this.findOne(teamId);
       if (!this.isMember(team, inviterId)) {
-        ErrorHandler.unauthorized('Not authorized to invite to this team');
+        ErrorHandler.forbidden(
+          'You do not have permission to invite to this team',
+        );
+      }
+
+      // If user is already a member of the team
+      const isAlreadyMember = team.memberships.some(
+        (membership) => membership.user.email === email,
+      );
+
+      if (isAlreadyMember) {
+        ErrorHandler.conflict('User is already a member of this team');
       }
 
       const token = this.jwtService.sign(
@@ -217,9 +242,51 @@ export class TeamService extends GenericService<Team> {
         ErrorHandler.notFound('Team with this code');
       }
 
+      // Check if code is expired
+      await this.checkAndHandleExpiredCode(team.code, true);
+
       return team;
     } catch (error) {
       ErrorHandler.handleError(error);
     }
+  }
+
+  async findOneForUser(teamId: number, userId: number): Promise<Team> {
+    try {
+      const team = await this.findOne(teamId);
+
+      // If user is not a member of the team
+      if (!this.isMember(team, userId)) {
+        ErrorHandler.forbidden(
+          'You do not have permission to access this team',
+        );
+      }
+
+      return team;
+    } catch (error) {
+      ErrorHandler.handleError(error);
+    }
+  }
+
+  private async checkAndHandleExpiredCode(
+    code: Code,
+    throwError = false,
+  ): Promise<boolean> {
+    const isExpired = code.isExpired || new Date() > code.expiresAt;
+
+    if (isExpired) {
+      // Mark the code as expired in the database
+      if (!code.isExpired) {
+        await this.codeRepo.update(code.id, { isExpired: true });
+      }
+
+      if (throwError) {
+        ErrorHandler.badRequest(
+          'Team code has expired. Please generate a new code.',
+        );
+      }
+    }
+
+    return isExpired;
   }
 }
