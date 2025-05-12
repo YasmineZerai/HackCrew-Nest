@@ -6,13 +6,17 @@ import { Ressource } from './entities/ressource.entity';
 import { CreateRessourceDto } from './dto/create-ressource.dto';
 import { UpdateRessourceDto } from './dto/update-ressource.dto';
 import { join } from 'path';
+import { GenericService } from '@src/common/services/generic.service';
 
 @Injectable()
-export class RessourcesService {
+export class RessourcesService extends GenericService<Ressource>  {
   constructor(
     @InjectRepository(Ressource)
     private readonly ressourceRepository: Repository<Ressource>,
-  ) {}
+  ) {
+        super(ressourceRepository)
+
+  }
 
   async create(
     createRessourceDto: CreateRessourceDto,
@@ -30,17 +34,17 @@ export class RessourcesService {
     return this.ressourceRepository.save(ressource);
   }
 
-  async findAll() {
-    return this.ressourceRepository.find();
-  }
+  // async findAll() {
+  //   return this.ressourceRepository.find();
+  // }
 
-  async findOne(id: number) {
-    const ressource = await this.ressourceRepository.findOne({ where: { id } });
-    if (!ressource) {
-      throw new NotFoundException(`Ressource with ID ${id} not found`);
-    }
-    return ressource;
-  }
+  // async findOne(id: number) {
+  //   const ressource = await this.ressourceRepository.findOne({ where: { id } });
+  //   if (!ressource) {
+  //     throw new NotFoundException(`Ressource with ID ${id} not found`);
+  //   }
+  //   return ressource;
+  // }
 
   async update(
     id: number,
