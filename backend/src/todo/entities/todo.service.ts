@@ -58,11 +58,20 @@ export class TodoService extends GenericService<Todo> {
 
         const message = `Todo "${todo.task}" status updated to "${status}".`;
 
-        this.sseService.notifyManyUsers(recipients, {
+        recipients.map((item)=>{
+            this.sseService.notifyUser(item,{
             todoId: todo.id,
             task: todo.task,
             status,
             message,
-        }, 'todo-status-updated');
+        },'todo-status-updated')
+        })
+
+        // this.sseService.notifyManyUsers(recipients, {
+        //     todoId: todo.id,
+        //     task: todo.task,
+        //     status,
+        //     message,
+        // }, 'todo-status-updated');
     }
 }
