@@ -4,6 +4,7 @@ import { Notification } from './entities/notification.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TeamService } from '@src/team/team.service';
+import axios from 'axios';
 
 @Injectable()
 export class NotificationService extends GenericService<Notification> {
@@ -15,7 +16,7 @@ export class NotificationService extends GenericService<Notification> {
     super(notificationRepository);
   }
 
-  async notifyTeam(userId: number, body: {}, teamId: number) {
+  async notifyTeam(userId: number, data:any, teamId: number) {
     const team = await this.teamService.findOneBy({ id: teamId }, [
       'memberships',
       'memberships.user',
@@ -27,6 +28,11 @@ export class NotificationService extends GenericService<Notification> {
       .map((m) => m.user.id)
       .filter((id) => id !== userId)
       .map((id) => id.toString());
+    recipients.map((item)=>{
+        axios.post('http://localhost:5000/sse/notify-user',{userId:item,data,event:'emergency'}).then((res)=>{console.log('team notified successfully')}).catch((err)=>console.log(err))
+        
+        })
     }
     
+
 }

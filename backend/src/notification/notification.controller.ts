@@ -30,7 +30,9 @@ export class NotificationController {
 
 
 
-        axios.post('http://localhost:5000/sse/notify-user',body).then((res)=>{console.log('team notified successfully')}).catch((err)=>console.log(err))
+        await this.notificationService.notifyTeam(user.id,body.data,id)
+
+        return 'team members successfully notified'
 
 
         
