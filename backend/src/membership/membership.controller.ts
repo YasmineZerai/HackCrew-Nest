@@ -14,12 +14,14 @@ import { User } from '@src/user/entities/user.entity';
 import { ZodPipe } from '@src/core/pipes/zod-validation.pipes';
 import { zodPipeType } from '@src/core/enums/enum';
 import { JoinTeamDto, JoinTeamSchema } from './dto/join-team.dto';
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { JoinTeamResponseDto } from './documentation/join-team.response';
 import { GetTeamMembersResponseDto } from './documentation/team-members.response';
 
 @Controller()
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth('JWT-auth')
+
 export class MembershipController {
   constructor(private readonly membershipService: MembershipService) {}
 

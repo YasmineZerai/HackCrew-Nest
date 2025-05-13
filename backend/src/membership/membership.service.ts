@@ -117,7 +117,7 @@ export class MembershipService {
     // Get all team members' IDs except the new member
     const memberIds = team.memberships
       .filter((membership) => membership.user.id !== newUser.id)
-      .map((membership) => membership.user.id.toString());
+      .map((membership) => membership.user.id);
 
     if (memberIds.length === 0) return;
 
