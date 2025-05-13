@@ -10,6 +10,7 @@ export class SseService {
     return new Observable((subscriber) => {
       const client: ConnectedClient = { userId, subscriber };
       this.clients.push(client);
+      console.log('user connected')
 
       subscriber.add(() => {
         this.clients = this.clients.filter((c) => c !== client);
@@ -18,12 +19,15 @@ export class SseService {
   }
 
   notifyUser(userId: number, data: any, event: string) {
+    console.log('entering notif')
     for (const client of this.clients) {
       if (client.userId === userId) {
         client.subscriber.next({
-          event,
-          data,
-        });
+                data: JSON.stringify({
+                    event: event,      
+                    message: data         
+                })
+            });
       }
     }
   }

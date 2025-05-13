@@ -14,23 +14,9 @@ export class NotificationController {
     constructor(private readonly notificationService: NotificationService){}
 
     @Post('alertTeam/:id')
-    async alertTeam(@ConnectedUser() user :any,@Body() body:{data:any},@Param('id') id :number){
+    async alertTeam(@ConnectedUser() user :any,@Param('id') id :number){
         
-
-
-        // recipients.map((item)=>{
-        //     this.sseService.notifyUser(item,{
-        //     todoId: todo.id,
-        //     task: todo.task,
-        //     status,
-        //     message,
-        // },'todo-status-updated')
-        // })
-
-
-
-
-        await this.notificationService.notifyTeam(user.id,body.data,id)
+        await this.notificationService.notifyTeam(user.id,'this is data',id)
 
         return 'team members successfully notified'
 
