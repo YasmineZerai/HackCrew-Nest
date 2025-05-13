@@ -12,7 +12,7 @@ export class SseController {
     return this.sseService.connect(id);
   }
   @Post('notify-user')
-  notifyUser(@Body() body) {
+  notifyUser(@Body() body : {userId:string,message:string,event:string}) {
     this.sseService.notifyUser(body.userId, body.message, body.event);
   }
 }
