@@ -54,7 +54,7 @@ export class TodoService extends GenericService<Todo> {
         const recipients = team.memberships
             .map((m) => m.user.id)
             .filter((id) => id !== actorId)
-            .map((id) => id.toString());
+            // .map((id) => id.toString());
 
         const message = `Todo "${todo.task}" status updated to "${status}".`;
 

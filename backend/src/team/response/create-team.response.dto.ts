@@ -1,6 +1,10 @@
-// create-team.response.ts
 import { ApiProperty } from '@nestjs/swagger';
 import { Team } from '../entities/team.entity';
+
+class TeamPayload {
+  @ApiProperty({ type: () => Team })
+  team: Team;
+}
 
 export class CreateTeamResponseDto {
   @ApiProperty({ example: true })
@@ -9,8 +13,6 @@ export class CreateTeamResponseDto {
   @ApiProperty({ example: 'Team created successfully' })
   message: string;
 
-  @ApiProperty({ type: Team })
-  payload: {
-    team: Team;
-  };
+  @ApiProperty({ type: () => TeamPayload })
+  payload: TeamPayload;
 }

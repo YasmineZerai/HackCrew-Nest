@@ -27,7 +27,7 @@ export class NotificationService extends GenericService<Notification> {
     const recipients = team.memberships
       .map((m) => m.user.id)
       .filter((id) => id !== userId)
-      .map((id) => id.toString());
+    //   .map((id) => id.toString());
     recipients.map((item)=>{
         axios.post('http://localhost:5000/sse/notify-user',{userId:item,data,event:'emergency'}).then((res)=>{console.log('team notified successfully')}).catch((err)=>console.log(err))
         
