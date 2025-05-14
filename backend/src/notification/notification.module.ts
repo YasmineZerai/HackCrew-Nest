@@ -7,9 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { SseService } from '@src/sse/sse.service';
 import { SseModule } from '@src/sse/sse.module';
+import { UserModule } from '@src/user/user.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Notification]),TeamModule,SseModule],
+  imports:[TypeOrmModule.forFeature([Notification]),TeamModule,SseModule,UserModule],
   providers: [NotificationService],
   controllers: [NotificationController]
 })
