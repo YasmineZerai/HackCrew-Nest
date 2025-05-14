@@ -7,6 +7,7 @@ import { TeamService } from '@src/team/team.service';
 import { SseService } from '@src/sse/sse.service';
 import { TodoStatus } from '@src/enum/todo-status.enum';
 import { TodoFilterDto } from '../dto/filter-todo.dto';
+import { NotificationService } from '@src/notification/notification.service';
 
 @Injectable()
 export class TodoService extends GenericService<Todo> {
@@ -15,6 +16,7 @@ export class TodoService extends GenericService<Todo> {
         private readonly todoRepo: Repository<Todo>,
         private readonly teamService: TeamService,
         private readonly sseService: SseService,
+        private readonly notificationService : NotificationService
     ) {
         super(todoRepo);
     }
@@ -64,7 +66,10 @@ export class TodoService extends GenericService<Todo> {
             task: todo.task,
             status,
             message,
-        },'todo-status-updated')
+        },'todo-status-updated');
+
+           
+
         })
 
         // this.sseService.notifyManyUsers(recipients, {
