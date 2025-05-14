@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { GenericService } from '@src/common/services/generic.service';
 import { Notification } from './entities/notification.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,12 +30,26 @@ export class NotificationService extends GenericService<Notification> {
       .filter((id) => id !== userId)
     recipients.map((item)=>{
         axios.post('http://localhost:5000/sse/notify-user',{userId:item,data:data.message,event:data.event}).then(async(res)=>{
-          const user = await this.userService.findOne(item)
-          const notification=await this.create({content:data.message,user:user})
+          // const user = await this.userService.findOne(item)
+          // const notification=await this.create({content:data.message,user:user})
+          await this.createNotification(item,data.message)
         }).catch((err)=>console.log(err))
         
         })
+  }
+
+  async createNotification(receiverId:number,content:string):Promise<Notification>{
+
+
+    const user = await this.userService.findOne(receiverId)
+    if(!user){
+      throw new NotFoundException(`user with ID ${receiverId} does not exist`)
     }
+    return await this.create({content,user:user})
+    
+
+
+  }
     
 
 }

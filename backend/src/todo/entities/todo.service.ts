@@ -16,7 +16,6 @@ export class TodoService extends GenericService<Todo> {
         @InjectRepository(Todo)
         private readonly todoRepo: Repository<Todo>,
         private readonly teamService: TeamService,
-        private readonly userService : UserService,
         private readonly sseService: SseService,
         private readonly notificationService : NotificationService
     ) {
@@ -69,10 +68,10 @@ export class TodoService extends GenericService<Todo> {
             status,
             message,
         },'todo-status-updated');
+
+        await this.notificationService.createNotification(item,message)
            
-           const receiver = await this.userService.findOne(item)
-            
-           await this.notificationService.create({content:message,user:receiver})
+   
             
 
            

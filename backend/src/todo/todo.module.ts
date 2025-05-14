@@ -9,7 +9,7 @@ import { NotificationModule } from '@src/notification/notification.module';
 import { UserModule } from '@src/user/user.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Todo]), TeamModule, SseModule,NotificationModule,UserModule],
+    imports: [TypeOrmModule.forFeature([Todo]), TeamModule, SseModule,NotificationModule],
     providers: [TodoService],
     controllers: [TodoController],
 })
