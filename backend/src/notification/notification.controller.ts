@@ -5,6 +5,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import axios from 'axios';
 import { TeamService } from '@src/team/team.service';
+import { AlertDto } from './dto/alert.dto';
 
 
 @Controller('notification')
@@ -14,9 +15,9 @@ export class NotificationController {
     constructor(private readonly notificationService: NotificationService){}
 
     @Post('alertTeam/:id')
-    async alertTeam(@ConnectedUser() user :any,@Param('id') id :number){
+    async alertTeam(@Body() createAlertDto : AlertDto,@ConnectedUser() user :any,@Param('id') id :number){
         
-        await this.notificationService.notifyTeam(user.id,'this is data',id)
+        await this.notificationService.notifyTeam(user.id,createAlertDto,id)
 
         return 'team members successfully notified'
 
