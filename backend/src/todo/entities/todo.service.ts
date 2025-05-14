@@ -8,6 +8,7 @@ import { SseService } from '@src/sse/sse.service';
 import { TodoStatus } from '@src/enum/todo-status.enum';
 import { TodoFilterDto } from '../dto/filter-todo.dto';
 import { NotificationService } from '@src/notification/notification.service';
+import { UserService } from '@src/user/user.service';
 
 @Injectable()
 export class TodoService extends GenericService<Todo> {
@@ -15,6 +16,7 @@ export class TodoService extends GenericService<Todo> {
         @InjectRepository(Todo)
         private readonly todoRepo: Repository<Todo>,
         private readonly teamService: TeamService,
+        private readonly userService : UserService,
         private readonly sseService: SseService,
         private readonly notificationService : NotificationService
     ) {
@@ -60,13 +62,18 @@ export class TodoService extends GenericService<Todo> {
 
         const message = `Todo "${todo.task}" status updated to "${status}".`;
 
-        recipients.map((item)=>{
+        recipients.map(async(item)=>{
             this.sseService.notifyUser(item,{
             todoId: todo.id,
             task: todo.task,
             status,
             message,
         },'todo-status-updated');
+           
+           const receiver = await this.userService.findOne(item)
+            
+           await this.notificationService.create({content:message,user:receiver})
+            
 
            
 
