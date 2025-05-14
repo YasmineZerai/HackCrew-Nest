@@ -12,6 +12,7 @@ import { UserModule } from '@src/user/user.module';
 @Module({
   imports:[TypeOrmModule.forFeature([Notification]),TeamModule,SseModule,UserModule],
   providers: [NotificationService],
-  controllers: [NotificationController]
+  controllers: [NotificationController],
+  exports:[NotificationService]
 })
 export class NotificationModule {}
