@@ -55,6 +55,10 @@ export class AuthController {
         email: { type: 'string', example: 'test@email.com' },
         password: { type: 'string', example: 'password' },
         username: { type: 'string', example: 'test' },
+        firstName: { type: 'string', example: 'test' },
+        lastName:{ type: 'string', example: 'test' }
+
+
       },
     },
   })
