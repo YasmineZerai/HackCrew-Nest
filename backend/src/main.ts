@@ -6,11 +6,17 @@ import { SwaggerDocumentationService } from './swagger/swagger-documentation.ser
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    transform: true,
-    transformOptions: { enableImplicitConversion: true },
-  }));
+  app.enableCors({
+    origin: 'http://localhost:5173', // or use '*' to allow all origins
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  );
   const swaggerService = app.get(SwaggerDocumentationService);
   swaggerService.setup(app);
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
