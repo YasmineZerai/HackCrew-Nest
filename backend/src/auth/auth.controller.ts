@@ -7,7 +7,9 @@ import {
   UsePipes,
   HttpCode,
   HttpStatus,
- UnauthorizedException } from '@nestjs/common';
+  UnauthorizedException,
+} from '@nestjs/common';
+
 import { AuthService } from './auth.service';
 import { HttpZodPipe } from '@src/core/pipes/http-zod-validation.pipes';
 import {
@@ -29,15 +31,16 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
-  @ApiBody({schema:{
-    type:'object',
-    properties:{
-      email:{type:'string',example:'test@email.com'},
-      password:{type:'string',example:'password'},
-
-    }
-  }})
-  @ApiResponse({type:LoginResponseDto})
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', example: 'test@email.com' },
+        password: { type: 'string', example: 'password' },
+      },
+    },
+  })
+  @ApiResponse({ type: LoginResponseDto })
   @UsePipes(new HttpZodPipe(LoginSchema))
   async login(@Body() loginDto: LoginDto) {
     const user = { email: loginDto.email, password: loginDto.password };
@@ -45,17 +48,17 @@ export class AuthController {
   }
 
   @Post('register')
-  @ApiBody({schema:{
-    type:'object',
-    properties:{
-      email:{type:'string',example:'test@email.com'},
-      password:{type:'string',example:'password'},
-      username:{type:'string',example:'test'},
-
-
-    }
-  }})
-  @ApiResponse({type:UserResponseDto})
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', example: 'test@email.com' },
+        password: { type: 'string', example: 'password' },
+        username: { type: 'string', example: 'test' },
+      },
+    },
+  })
+  @ApiResponse({ type: UserResponseDto })
   @UsePipes(new HttpZodPipe(RegisterSchema))
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
@@ -63,7 +66,7 @@ export class AuthController {
 
   // @UseGuards(JwtAuthGuard)
   @Post('logout')
-  @ApiResponse({type:LogoutResponseDto})
+  @ApiResponse({ type: LogoutResponseDto })
   @HttpCode(HttpStatus.OK)
   async logout(@Request() req) {
     const token = req.headers.authorization?.split(' ')[1];
