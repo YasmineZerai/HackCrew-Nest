@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from '@src/user/entities/user.entity';
 import { Membership } from '@src/membership/entities/membership.entity';
 import { instanceToPlain } from 'class-transformer';
+import { unknown } from 'zod';
 
 @Injectable()
 export class TeamService extends GenericService<Team> {
@@ -118,7 +119,7 @@ export class TeamService extends GenericService<Team> {
     }
   }
 
-  async getTeamCode(teamId: number, userId: number): Promise<Code> {
+  async getTeamCode(teamId: number, userId: number): Promise<Code | null> {
     try {
       const team = await this.findOne(teamId);
 
@@ -128,13 +129,10 @@ export class TeamService extends GenericService<Team> {
         );
       }
 
-      if (!team.code) {
-        ErrorHandler.notFound('No code found for this team');
+      const isExpired = await this.checkAndHandleExpiredCode(team.code);
+      if (isExpired || !team.code) {
+        return null;
       }
-
-      // Check if the code is expired
-      await this.checkAndHandleExpiredCode(team.code, true);
-
       return team.code;
     } catch (error) {
       ErrorHandler.handleError(error);
@@ -275,7 +273,6 @@ export class TeamService extends GenericService<Team> {
     const isExpired = code.isExpired || new Date() > code.expiresAt;
 
     if (isExpired) {
-      // Mark the code as expired in the database
       if (!code.isExpired) {
         await this.codeRepo.update(code.id, { isExpired: true });
       }
