@@ -117,11 +117,11 @@ export class MembershipService {
 
   private notifyTeamAboutNewMember(team: Team, newUser: User): void {
     // Get all team members' IDs except the new member
-    const memberIds = team.memberships
-      .filter((membership) => membership.user.id !== newUser.id)
-      .map((membership) => membership.user.id);
+    // const memberIds = team.memberships
+    //   .filter((membership) => membership.user.id !== newUser.id)
+    //   .map((membership) => membership.user.id);
 
-    if (memberIds.length === 0) return;
+    // if (memberIds.length === 0) return;
 
     const notificationData = {
       team: {
@@ -133,24 +133,26 @@ export class MembershipService {
         name: newUser.username,
       },
     };
-    const message = 'user joined your team';
+    const message = `user with ID ${newUser.id} and username ${newUser.username} joined your team`;
 
-    // Send notifications to other team members
-    // this.sseService.notifyManyUsers(
-    //   memberIds,
-    //   notificationData,
-    //   'team-member-joined',
-    // );
-    memberIds.map(async (item) => {
-      this.sseService.notifyUser(
-        item,
-        {
-          notificationData,
-        },
-        'team-member-joined',
-      );
+    // // Send notifications to other team members
+    // // this.sseService.notifyManyUsers(
+    // //   memberIds,
+    // //   notificationData,
+    // //   'team-member-joined',
+    // // );
+    // memberIds.map(async (item) => {
+    //   this.sseService.notifyUser(
+    //     item,
+    //     {
+    //       notificationData,
+    //     },
+    //     'team-member-joined',
+    //   );
 
-      await this.notificationService.createNotification(item, message);
-    });
+    //   await this.notificationService.createNotification(item, message);
+    // });
+
+    return  this.notificationService.notifyReceivers(team,newUser.id,notificationData,message,'joining-team')
   }
 }
