@@ -26,6 +26,13 @@ export class User extends Timestamp {
   username: string;
   @ApiProperty()
   @Column()
+  firstName : string
+  @ApiProperty()
+  @Column()
+  lastName : string
+
+  @ApiProperty()
+  @Column()
   email: string;
   @ApiProperty()
   @Column()
