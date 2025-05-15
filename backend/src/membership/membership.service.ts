@@ -7,6 +7,7 @@ import { User } from '@src/user/entities/user.entity';
 import { Team } from '@src/team/entities/team.entity';
 import { TeamService } from '@src/team/team.service';
 import { SseService } from '@src/sse/sse.service';
+import { NotificationService } from '@src/notification/notification.service';
 
 @Injectable()
 export class MembershipService {
@@ -16,6 +17,7 @@ export class MembershipService {
     @Inject(forwardRef(() => TeamService))
     private teamService: TeamService,
     private sseService: SseService,
+    private notificationService:NotificationService
   ) {}
 
   async joinTeamByCode(user: User, code: string): Promise<Team> {
@@ -131,6 +133,7 @@ export class MembershipService {
         name: newUser.username,
       },
     };
+    const message = 'user joined your team'
 
     // Send notifications to other team members
     this.sseService.notifyManyUsers(
@@ -138,5 +141,19 @@ export class MembershipService {
       notificationData,
       'team-member-joined',
     );
+         memberIds.map(async(item)=>{
+            this.sseService.notifyUser(item,{
+            notificationData,
+        },'team-member-joined');
+
+        await this.notificationService.createNotification(item,message)
+           
+   
+            
+
+           
+
+        })
+    
   }
 }
