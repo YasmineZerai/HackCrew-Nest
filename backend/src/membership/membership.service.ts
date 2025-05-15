@@ -153,6 +153,6 @@ export class MembershipService {
     //   await this.notificationService.createNotification(item, message);
     // });
 
-    return  this.notificationService.notifyReceivers(team,newUser,notificationData,message,'joining-team')
+    return  this.notificationService.notifyReceivers(team,newUser.id,notificationData,message,'joining-team')
   }
 }

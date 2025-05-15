@@ -39,8 +39,7 @@ export class NotificationService extends GenericService<Notification> {
         
     //     })
     const team=await this.teamService.findOne(teamId)
-    const user=await this.userService.findOne(userId)
-    return this.notifyReceivers(team,user,data.message,data.message,data.event)
+    return this.notifyReceivers(team,userId,data.message,data.message,data.event)
 
   }
 
@@ -57,10 +56,10 @@ export class NotificationService extends GenericService<Notification> {
 
   }
 
-   notifyReceivers(team:Team,user:User,data:any,message:string,event:string){
+   notifyReceivers(team:Team,userId:number,data:any,message:string,event:string){
 
     const receiversIds = team.memberships
-      .filter((membership) => membership.user.id !== user.id)
+      .filter((membership) => membership.user.id !== userId)
       .map((membership) => membership.user.id);
 
     if (receiversIds.length === 0) return;
