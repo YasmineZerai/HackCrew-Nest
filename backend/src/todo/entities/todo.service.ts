@@ -7,6 +7,8 @@ import { TeamService } from '@src/team/team.service';
 import { SseService } from '@src/sse/sse.service';
 import { TodoStatus } from '@src/enum/todo-status.enum';
 import { TodoFilterDto } from '../dto/filter-todo.dto';
+import { NotificationService } from '@src/notification/notification.service';
+import { UserService } from '@src/user/user.service';
 
 @Injectable()
 export class TodoService extends GenericService<Todo> {
@@ -15,6 +17,7 @@ export class TodoService extends GenericService<Todo> {
         private readonly todoRepo: Repository<Todo>,
         private readonly teamService: TeamService,
         private readonly sseService: SseService,
+        private readonly notificationService : NotificationService
     ) {
         super(todoRepo);
     }
@@ -54,15 +57,32 @@ export class TodoService extends GenericService<Todo> {
         const recipients = team.memberships
             .map((m) => m.user.id)
             .filter((id) => id !== actorId)
-            .map((id) => id.toString());
+            // .map((id) => id.toString());
 
         const message = `Todo "${todo.task}" status updated to "${status}".`;
 
-        this.sseService.notifyManyUsers(recipients, {
+        recipients.map(async(item)=>{
+            this.sseService.notifyUser(item,{
             todoId: todo.id,
             task: todo.task,
             status,
             message,
-        }, 'todo-status-updated');
+        },'todo-status-updated');
+
+        await this.notificationService.createNotification(item,message)
+           
+   
+            
+
+           
+
+        })
+
+        // this.sseService.notifyManyUsers(recipients, {
+        //     todoId: todo.id,
+        //     task: todo.task,
+        //     status,
+        //     message,
+        // }, 'todo-status-updated');
     }
 }
