@@ -8,6 +8,8 @@ import axios from 'axios';
 import { SseService } from '@src/sse/sse.service';
 import { AlertDto } from './dto/alert.dto';
 import { UserService } from '@src/user/user.service';
+import { Team } from '@src/team/entities/team.entity';
+import { User } from '@src/user/entities/user.entity';
 
 @Injectable()
 export class NotificationService extends GenericService<Notification> {
@@ -47,6 +49,31 @@ export class NotificationService extends GenericService<Notification> {
     }
     return await this.create({content,user:user})
     
+
+
+  }
+
+   notifyReceivers(team:Team,user:User,data:any,message:string,event:string){
+
+    const receiversIds = team.memberships
+      .filter((membership) => membership.user.id !== user.id)
+      .map((membership) => membership.user.id);
+
+    if (receiversIds.length === 0) return;
+
+
+     receiversIds.map(async (item) => {
+      this.sseService.notifyUser(
+        item,
+        {
+          data,
+        },
+        event,
+      );
+
+      await this.createNotification(item, message);
+    });
+
 
 
   }
