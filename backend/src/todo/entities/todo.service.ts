@@ -54,29 +54,30 @@ export class TodoService extends GenericService<Todo> {
 
         if (!team?.memberships) return;
 
-        const recipients = team.memberships
-            .map((m) => m.user.id)
-            .filter((id) => id !== actorId)
-            // .map((id) => id.toString());
+        // const recipients = team.memberships
+        //     .map((m) => m.user.id)
+        //     .filter((id) => id !== actorId)
+        //     // .map((id) => id.toString());
 
         const message = `Todo "${todo.task}" status updated to "${status}".`;
+        const event = 'todo-status-updated'
 
-        recipients.map(async(item)=>{
-            this.sseService.notifyUser(item,{
-            todoId: todo.id,
-            task: todo.task,
-            status,
-            message,
-        },'todo-status-updated');
+        // recipients.map(async(item)=>{
+        //     this.sseService.notifyUser(item,{
+        //     todoId: todo.id,
+        //     task: todo.task,
+        //     status,
+        //     message,
+        // },'todo-status-updated');
 
-        await this.notificationService.createNotification(item,message)
+        // await this.notificationService.createNotification(item,message)
            
    
             
 
            
 
-        })
+        // })
 
         // this.sseService.notifyManyUsers(recipients, {
         //     todoId: todo.id,
@@ -84,5 +85,7 @@ export class TodoService extends GenericService<Todo> {
         //     status,
         //     message,
         // }, 'todo-status-updated');
+       return  this.notificationService.notifyReceivers(team,actorId,message,message,event)
+
     }
 }
