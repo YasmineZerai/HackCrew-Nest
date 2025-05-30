@@ -14,15 +14,10 @@ export class CreateRessourceDto {
   @IsOptional()
   @IsUrl()
   link?: string;
-  // @ApiProperty()
-  // @IsOptional()
-  // teamId?: number;
-  // @ApiProperty()
-  // @IsOptional()
-  // userId?: number;
   @ApiProperty({
     type: 'string',
     format: 'binary',
-    description: 'The uploaded file'})
-  file : any;
+    description: 'The uploaded file',
+  })
+  file: any;
 }
