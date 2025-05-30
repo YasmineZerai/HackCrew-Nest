@@ -9,6 +9,7 @@ import {
   
   StreamableFile,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { RessourcesService } from './ressource.service';
@@ -17,10 +18,14 @@ import { UpdateRessourceDto } from './dto/update-ressource.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { ApiBody, ApiConsumes, ApiOkResponse, ApiProduces, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiProduces, ApiResponse } from '@nestjs/swagger';
 import { Ressource } from './entities/ressource.entity';
+import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
 
 @Controller('ressources')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('JWT-auth')
+
 export class RessourcesController {
   constructor(private readonly ressourcesService: RessourcesService) {}
 
