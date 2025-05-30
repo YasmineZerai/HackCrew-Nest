@@ -8,6 +8,9 @@ import { Team } from '@src/team/entities/team.entity';
 import { TeamService } from '@src/team/team.service';
 import { SseService } from '@src/sse/sse.service';
 import { NotificationService } from '@src/notification/notification.service';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { BlacklistService } from '@src/blacklist/blacklist.service';
 import { EventType } from '@src/enum/event-type.enum';
 
 @Injectable()
@@ -19,6 +22,9 @@ export class MembershipService {
     private teamService: TeamService,
     private sseService: SseService,
     private notificationService: NotificationService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+    private blacklistService: BlacklistService,
   ) {}
 
   async joinTeamByCode(user: User, code: string): Promise<Team> {
@@ -37,6 +43,60 @@ export class MembershipService {
       if (existingMembership) {
         ErrorHandler.conflict('You are already a member of this team');
       }
+
+      await this.joinTeam(user, team);
+
+      this.notifyTeamAboutNewMember(team, user);
+
+      return team;
+    } catch (error) {
+      ErrorHandler.handleError(error);
+    }
+  }
+
+  async joinTeamByInvitation(user: User, token: string): Promise<Team> {
+    try {
+      // Check if token is already blacklisted
+      const isBlacklisted =
+        await this.blacklistService.isTokenBlacklisted(token);
+
+      if (isBlacklisted) {
+        ErrorHandler.forbidden('This invitation has already been used');
+      }
+
+      let payload: { email: string; teamId: number };
+
+      try {
+        payload = this.jwtService.verify(token, {
+          secret: this.configService.get<string>('JWT_SECRET'),
+        });
+      } catch (error) {
+        ErrorHandler.forbidden('Invalid or expired invitation token');
+      }
+
+      if (!payload || !payload.email || !payload.teamId) {
+        ErrorHandler.forbidden('Invalid invitation token format');
+      }
+
+      // Verify the token was issued to this user's email
+      if (payload.email !== user.email) {
+        ErrorHandler.forbidden(
+          'This invitation was sent to a different email address',
+        );
+      }
+
+      const team = await this.teamService.findOne(payload.teamId);
+
+      const existingMembership = team.memberships?.find(
+        (m) => m.user?.id === user.id,
+      );
+
+      if (existingMembership) {
+        ErrorHandler.conflict('You are already a member of this team');
+      }
+
+      // Blacklist the token to prevent reuse
+      await this.blacklistService.addToken(token);
 
       await this.joinTeam(user, team);
 
