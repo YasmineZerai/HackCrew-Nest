@@ -55,7 +55,6 @@ export class RessourcesController {
     @Param('teamId') teamId : number
   ) {
     const newRessource = await  this.ressourcesService.createRessource(createRessourceDto,user.id,teamId,file);
-    console.log('teamid',newRessource.team.id)
     this.ressourcesService.notifyTeamMembers(newRessource.team.id,user.id)
     return newRessource
   }
