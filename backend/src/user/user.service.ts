@@ -7,12 +7,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { GenericService } from '../common/services/generic.service';
 import * as bcrypt from 'bcrypt';
 import { ErrorHandler } from '../common/utils/error-handler.util';
+import { ProfileService } from '../profile/profile.service';
 
 @Injectable()
 export class UserService extends GenericService<User> {
   constructor(
     @InjectRepository(User)
     private userRepo: Repository<User>,
+    private readonly profileService: ProfileService, // inject ProfileService
   ) {
     super(
       userRepo,
@@ -40,10 +42,18 @@ export class UserService extends GenericService<User> {
 
       const hashedPassword = await this.hashPassword(createUserDto.password);
 
-      return super.create({
+      // Create user first
+      const user = await super.create({
         ...createUserDto,
         password: hashedPassword,
       });
+
+      // Create and assign empty profile
+      const profile = await this.profileService.createProfileForUser(user);
+      user.profile = profile;
+      await this.userRepo.save(user);
+
+      return user;
     } catch (error) {
       ErrorHandler.handleError(error);
     }
