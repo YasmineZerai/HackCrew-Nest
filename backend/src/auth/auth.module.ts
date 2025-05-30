@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './guards/jwt.guard';
 import { JWT_EXPIRES_IN, JWT_SECRET } from './constants/constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { UserModule } from '@src/user/user.module';
+import { BlacklistModule } from '../blacklist/blacklist.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserModule } from '@src/user/user.module';
       signOptions: { expiresIn: JWT_EXPIRES_IN },
     }),
     UserModule,
+    BlacklistModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtAuthGuard],

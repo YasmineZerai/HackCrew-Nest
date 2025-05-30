@@ -21,7 +21,8 @@ export class ErrorHandler {
       if (error.message.includes('Duplicate entry')) {
         throw new ConflictException('Resource already exists');
       }
-      throw new InternalServerErrorException('Database operation failed');
+      // throw new InternalServerErrorException('Database operation failed');
+      throw error;
     }
 
     // Generic errors

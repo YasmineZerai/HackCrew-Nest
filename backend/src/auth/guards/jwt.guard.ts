@@ -31,7 +31,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException('Authorization token is missing');
     }
 
-    if (this.authService.isTokenBlacklisted(token)) {
+    if (await this.authService.isTokenBlacklisted(token)) {
       throw new UnauthorizedException('Token has been invalidated');
     }
 
