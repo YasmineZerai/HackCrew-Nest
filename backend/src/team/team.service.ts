@@ -88,14 +88,14 @@ export class TeamService extends GenericService<Team> {
       }
 
       // Generate a numeric code between 100000 and 999999
-      const codeId = Math.floor(100000 + Math.random() * 900000);
+      const codeValue = Math.floor(100000 + Math.random() * 900000);
 
       // Set expiration to exactly 1 hour from now
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + 1);
 
       const code = this.codeRepo.create({
-        id: codeId,
+        value: codeValue,
         expiresAt,
         isExpired: false,
         team,
@@ -232,7 +232,7 @@ export class TeamService extends GenericService<Team> {
       const team = await this.teamRepo.findOne({
         where: {
           code: {
-            id: code,
+            value: code,
           },
         },
         relations: ['code', 'memberships', 'memberships.user'],
