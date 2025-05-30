@@ -128,7 +128,7 @@ export class TeamService extends GenericService<Team> {
           'You do not have permission to view this team code',
         );
       }
-
+      if (!team.code) return null;
       const isExpired = await this.checkAndHandleExpiredCode(team.code);
       if (isExpired || !team.code) {
         return null;
