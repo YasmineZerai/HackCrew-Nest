@@ -7,7 +7,11 @@ export const multerConfig = {
     filename: (req, file, callback) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileExt = extname(file.originalname);
-      const fileName = `${file.fieldname}-${uniqueSuffix}${fileExt}`;
+      const title = req.body?.title || 'file';
+      const sanitizedTitle = title
+        .replace(/[^a-zA-Z0-9-_]/g, '-')
+        .toLowerCase();
+      const fileName = `${sanitizedTitle}-${uniqueSuffix}${fileExt}`;
       callback(null, fileName);
     },
   }),
