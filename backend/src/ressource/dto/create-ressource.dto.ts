@@ -14,12 +14,12 @@ export class CreateRessourceDto {
   @IsOptional()
   @IsUrl()
   link?: string;
-  @ApiProperty()
-  @IsOptional()
-  teamId?: number;
-  @ApiProperty()
-  @IsOptional()
-  userId?: number;
+  // @ApiProperty()
+  // @IsOptional()
+  // teamId?: number;
+  // @ApiProperty()
+  // @IsOptional()
+  // userId?: number;
   @ApiProperty({
     type: 'string',
     format: 'binary',
