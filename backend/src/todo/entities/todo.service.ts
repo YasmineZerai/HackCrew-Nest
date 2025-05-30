@@ -9,6 +9,7 @@ import { TodoStatus } from '@src/enum/todo-status.enum';
 import { TodoFilterDto } from '../dto/filter-todo.dto';
 import { NotificationService } from '@src/notification/notification.service';
 import { UserService } from '@src/user/user.service';
+import { EventType } from '@src/enum/event-type.enum';
 
 @Injectable()
 export class TodoService extends GenericService<Todo> {
@@ -60,7 +61,7 @@ export class TodoService extends GenericService<Todo> {
         //     // .map((id) => id.toString());
 
         const message = `Todo "${todo.task}" status updated to "${status}".`;
-        const event = 'todo-status-updated'
+        const event = EventType.UPDATE_TODO
 
         // recipients.map(async(item)=>{
         //     this.sseService.notifyUser(item,{

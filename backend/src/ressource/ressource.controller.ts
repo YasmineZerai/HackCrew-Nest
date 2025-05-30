@@ -6,15 +6,17 @@ import {
   Param,
   Post,
   Put,
+  
   StreamableFile,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { RessourcesService } from './ressource.service';
 import { CreateRessourceDto } from './dto/create-ressource.dto';
 import { UpdateRessourceDto } from './dto/update-ressource.dto';
-
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiOkResponse,
@@ -22,21 +24,34 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { Ressource } from './entities/ressource.entity';
+import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
+import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { FileUploadInterceptor } from '@src/ressource/file-upload.interceptor';
 
 @Controller('ressources')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('JWT-auth')
 export class RessourcesController {
   constructor(private readonly ressourcesService: RessourcesService) {}
 
-  @Post()
+  @Post(':teamId')
   @ApiConsumes('multipart/form-data')
   @ApiResponse({ type: Ressource })
   @UseInterceptors(FileUploadInterceptor)
-  create(
+  async create(
     @Body() createRessourceDto: CreateRessourceDto,
     @UploadedFile() file: Express.Multer.File,
+    @ConnectedUser() user: any,
+    @Param('teamId') teamId: number,
   ) {
-    return this.ressourcesService.create(createRessourceDto, file);
+    const newRessource = await this.ressourcesService.createRessource(
+      createRessourceDto,
+      user.id,
+      teamId,
+      file,
+    );
+    this.ressourcesService.notifyTeamMembers(newRessource.team.id,user.id)
+    return newRessource;
   }
 
   @Get()
