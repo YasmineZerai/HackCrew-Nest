@@ -6,6 +6,9 @@ import { GenericService } from '@src/common/services/generic.service';
 import { TeamService } from '@src/team/team.service';
 import { SseService } from '@src/sse/sse.service';
 import { TodoStatus } from '@src/enum/todo-status.enum';
+import { TodoFilterDto } from '../dto/filter-todo.dto';
+import { NotificationService } from '@src/notification/notification.service';
+import { UserService } from '@src/user/user.service';
 
 @Injectable()
 export class TodoService extends GenericService<Todo> {
@@ -14,27 +17,29 @@ export class TodoService extends GenericService<Todo> {
         private readonly todoRepo: Repository<Todo>,
         private readonly teamService: TeamService,
         private readonly sseService: SseService,
+        private readonly notificationService : NotificationService
     ) {
         super(todoRepo);
     }
 
-    async findByUser(userId: number): Promise<Todo[]> {
+    async findByUser(userId: number, filter: TodoFilterDto): Promise<Todo[]> {
         return this.todoRepo.find({
-            where: { user: { id: userId } },
+            where: { user: { id: userId }, ...filter },
         });
     }
 
-    async findByTeam(teamId: number): Promise<Todo[]> {
+    async findByTeam(teamId: number, filter): Promise<Todo[]> {
         return this.todoRepo.find({
-            where: { team: { id: teamId } },
+            where: { team: { id: teamId }, ...filter },
         });
     }
 
-    async findByUserAndTeam(userId: number, teamId: number): Promise<Todo[]> {
+    async findByUserAndTeam(userId: number, teamId: number, filter: TodoFilterDto): Promise<Todo[]> {
         return this.todoRepo.find({
             where: {
                 user: { id: userId },
                 team: { id: teamId },
+                ...filter
             },
         });
     }
@@ -49,18 +54,38 @@ export class TodoService extends GenericService<Todo> {
 
         if (!team?.memberships) return;
 
-        const recipients = team.memberships
-            .map((m) => m.user.id)
-            .filter((id) => id !== actorId)
-            .map((id) => id.toString());
+        // const recipients = team.memberships
+        //     .map((m) => m.user.id)
+        //     .filter((id) => id !== actorId)
+        //     // .map((id) => id.toString());
 
         const message = `Todo "${todo.task}" status updated to "${status}".`;
+        const event = 'todo-status-updated'
 
-        this.sseService.notifyManyUsers(recipients, {
-            todoId: todo.id,
-            task: todo.task,
-            status,
-            message,
-        }, 'todo-status-updated');
+        // recipients.map(async(item)=>{
+        //     this.sseService.notifyUser(item,{
+        //     todoId: todo.id,
+        //     task: todo.task,
+        //     status,
+        //     message,
+        // },'todo-status-updated');
+
+        // await this.notificationService.createNotification(item,message)
+           
+   
+            
+
+           
+
+        // })
+
+        // this.sseService.notifyManyUsers(recipients, {
+        //     todoId: todo.id,
+        //     task: todo.task,
+        //     status,
+        //     message,
+        // }, 'todo-status-updated');
+       return  this.notificationService.notifyReceivers(team,actorId,message,message,event)
+
     }
 }

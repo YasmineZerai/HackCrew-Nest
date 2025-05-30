@@ -7,6 +7,7 @@ import { User } from '@src/user/entities/user.entity';
 import { Team } from '@src/team/entities/team.entity';
 import { TeamService } from '@src/team/team.service';
 import { SseService } from '@src/sse/sse.service';
+import { NotificationService } from '@src/notification/notification.service';
 
 @Injectable()
 export class MembershipService {
@@ -16,6 +17,7 @@ export class MembershipService {
     @Inject(forwardRef(() => TeamService))
     private teamService: TeamService,
     private sseService: SseService,
+    private notificationService: NotificationService,
   ) {}
 
   async joinTeamByCode(user: User, code: string): Promise<Team> {
@@ -115,11 +117,11 @@ export class MembershipService {
 
   private notifyTeamAboutNewMember(team: Team, newUser: User): void {
     // Get all team members' IDs except the new member
-    const memberIds = team.memberships
-      .filter((membership) => membership.user.id !== newUser.id)
-      .map((membership) => membership.user.id.toString());
+    // const memberIds = team.memberships
+    //   .filter((membership) => membership.user.id !== newUser.id)
+    //   .map((membership) => membership.user.id);
 
-    if (memberIds.length === 0) return;
+    // if (memberIds.length === 0) return;
 
     const notificationData = {
       team: {
@@ -131,12 +133,26 @@ export class MembershipService {
         name: newUser.username,
       },
     };
+    const message = `user with ID ${newUser.id} and username ${newUser.username} joined your team`;
 
-    // Send notifications to other team members
-    this.sseService.notifyManyUsers(
-      memberIds,
-      notificationData,
-      'team-member-joined',
-    );
+    // // Send notifications to other team members
+    // // this.sseService.notifyManyUsers(
+    // //   memberIds,
+    // //   notificationData,
+    // //   'team-member-joined',
+    // // );
+    // memberIds.map(async (item) => {
+    //   this.sseService.notifyUser(
+    //     item,
+    //     {
+    //       notificationData,
+    //     },
+    //     'team-member-joined',
+    //   );
+
+    //   await this.notificationService.createNotification(item, message);
+    // });
+
+    return  this.notificationService.notifyReceivers(team,newUser.id,notificationData,message,'joining-team')
   }
 }

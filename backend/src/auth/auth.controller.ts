@@ -7,7 +7,9 @@ import {
   UsePipes,
   HttpCode,
   HttpStatus,
- UnauthorizedException } from '@nestjs/common';
+  UnauthorizedException,
+} from '@nestjs/common';
+
 import { AuthService } from './auth.service';
 import { HttpZodPipe } from '@src/core/pipes/http-zod-validation.pipes';
 import {
@@ -17,12 +19,28 @@ import {
   RegisterSchema,
 } from '@src/core/zod-schemas/auth.schema';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { string } from 'zod';
+import passport from 'passport';
+import { LoginResponseDto } from './documentation/login.response';
+import { UserResponseDto } from './documentation/register.response';
+import { LogoutResponseDto } from './documentation/logout.response';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', example: 'test@email.com' },
+        password: { type: 'string', example: 'password' },
+      },
+    },
+  })
+  @ApiResponse({ type: LoginResponseDto })
   @UsePipes(new HttpZodPipe(LoginSchema))
   async login(@Body() loginDto: LoginDto) {
     const user = { email: loginDto.email, password: loginDto.password };
@@ -30,6 +48,21 @@ export class AuthController {
   }
 
   @Post('register')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', example: 'test@email.com' },
+        password: { type: 'string', example: 'password' },
+        username: { type: 'string', example: 'test' },
+        firstName: { type: 'string', example: 'test' },
+        lastName:{ type: 'string', example: 'test' }
+
+
+      },
+    },
+  })
+  @ApiResponse({ type: UserResponseDto })
   @UsePipes(new HttpZodPipe(RegisterSchema))
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
@@ -37,6 +70,7 @@ export class AuthController {
 
   // @UseGuards(JwtAuthGuard)
   @Post('logout')
+  @ApiResponse({ type: LogoutResponseDto })
   @HttpCode(HttpStatus.OK)
   async logout(@Request() req) {
     const token = req.headers.authorization?.split(' ')[1];

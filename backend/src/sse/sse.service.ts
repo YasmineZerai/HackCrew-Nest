@@ -6,10 +6,11 @@ import { Observable } from 'rxjs';
 export class SseService {
   private clients: ConnectedClient[] = [];
 
-  connect(userId: string): Observable<{ data: any; event?: string }> {
+  connect(userId: number): Observable<{ data: any; event?: string }> {
     return new Observable((subscriber) => {
       const client: ConnectedClient = { userId, subscriber };
       this.clients.push(client);
+      console.log('user connected')
 
       subscriber.add(() => {
         this.clients = this.clients.filter((c) => c !== client);
@@ -17,18 +18,21 @@ export class SseService {
     });
   }
 
-  notifyUser(userId: string, message: string, event: string) {
+  notifyUser(userId: number, data: any, event: string) {
+    console.log('entering notif')
     for (const client of this.clients) {
       if (client.userId === userId) {
         client.subscriber.next({
-          event: event,
-          data: { message },
-        });
+                data: JSON.stringify({
+                    event: event,      
+                    message: data         
+                })
+            });
       }
     }
   }
 
-  notifyManyUsers(userIds: string[], data: any, event: string) {
+  notifyManyUsers(userIds: number[], data: any, event: string) {
     for (const client of this.clients) {
       if (userIds.includes(client.userId)) {
         client.subscriber.next({

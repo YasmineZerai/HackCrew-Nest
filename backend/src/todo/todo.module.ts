@@ -5,9 +5,11 @@ import { TodoService } from './entities/todo.service';
 import { TodoController } from './todo.controller';
 import { TeamModule } from '@src/team/team.module';
 import { SseModule } from '@src/sse/sse.module';
+import { NotificationModule } from '@src/notification/notification.module';
+import { UserModule } from '@src/user/user.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Todo]), TeamModule, SseModule],
+    imports: [TypeOrmModule.forFeature([Todo]), TeamModule, SseModule,NotificationModule],
     providers: [TodoService],
     controllers: [TodoController],
 })
