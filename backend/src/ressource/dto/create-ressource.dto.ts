@@ -24,5 +24,5 @@ export class CreateRessourceDto {
     type: 'string',
     format: 'binary',
     description: 'The uploaded file'})
-  file : any;
+  file: any;
 }

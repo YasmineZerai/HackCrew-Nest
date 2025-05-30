@@ -9,13 +9,12 @@ import { join } from 'path';
 import { GenericService } from '@src/common/services/generic.service';
 
 @Injectable()
-export class RessourcesService extends GenericService<Ressource>  {
+export class RessourcesService extends GenericService<Ressource> {
   constructor(
     @InjectRepository(Ressource)
     private readonly ressourceRepository: Repository<Ressource>,
   ) {
-        super(ressourceRepository)
-
+    super(ressourceRepository);
   }
 
   async create(
@@ -33,18 +32,6 @@ export class RessourcesService extends GenericService<Ressource>  {
 
     return this.ressourceRepository.save(ressource);
   }
-
-  // async findAll() {
-  //   return this.ressourceRepository.find();
-  // }
-
-  // async findOne(id: number) {
-  //   const ressource = await this.ressourceRepository.findOne({ where: { id } });
-  //   if (!ressource) {
-  //     throw new NotFoundException(`Ressource with ID ${id} not found`);
-  //   }
-  //   return ressource;
-  // }
 
   async update(
     id: number,
