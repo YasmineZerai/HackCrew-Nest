@@ -8,6 +8,7 @@ import { Team } from '@src/team/entities/team.entity';
 import { TeamService } from '@src/team/team.service';
 import { SseService } from '@src/sse/sse.service';
 import { NotificationService } from '@src/notification/notification.service';
+import { EventType } from '@src/enum/event-type.enum';
 
 @Injectable()
 export class MembershipService {
@@ -153,6 +154,6 @@ export class MembershipService {
     //   await this.notificationService.createNotification(item, message);
     // });
 
-    return  this.notificationService.notifyReceivers(team,newUser.id,notificationData,message,'joining-team')
+    return  this.notificationService.notifyReceivers(team,newUser.id,notificationData,message,EventType.TEAM_JOIN)
   }
 }

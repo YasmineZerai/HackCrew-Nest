@@ -7,22 +7,37 @@ import { CreateRessourceDto } from './dto/create-ressource.dto';
 import { UpdateRessourceDto } from './dto/update-ressource.dto';
 import { join } from 'path';
 import { GenericService } from '@src/common/services/generic.service';
+import { NotificationService } from '@src/notification/notification.service';
+import { TeamService } from '@src/team/team.service';
+import { EventType } from '@src/enum/event-type.enum';
+import { UserService } from '@src/user/user.service';
 
 @Injectable()
 export class RessourcesService extends GenericService<Ressource>  {
   constructor(
     @InjectRepository(Ressource)
     private readonly ressourceRepository: Repository<Ressource>,
+    private readonly notificationService : NotificationService,
+    private readonly teamService : TeamService,
+    private readonly userService : UserService
   ) {
         super(ressourceRepository)
 
   }
 
-  async create(
+  async createRessource(
     createRessourceDto: CreateRessourceDto,
+    userId:number,
+    teamId:number,
     file?: Express.Multer.File,
+    
   ) {
     const ressource = this.ressourceRepository.create(createRessourceDto);
+    const user = await this.userService.findOne(userId)
+    const team = await this.teamService.findOne(teamId)
+    if(!user || !team){throw new NotFoundException()}
+    ressource.user=user;
+    ressource.team=team;
 
     if (file) {
       ressource.path = file.path;
@@ -109,5 +124,13 @@ export class RessourcesService extends GenericService<Ressource>  {
     }
 
     return createReadStream(filePath);
+  }
+
+  async notifyTeamMembers(teamId:number,userId:number){
+    const team = await this.teamService.findOne(teamId)
+    const message = `Ressource  is created.`;
+    const event = EventType.NEW_RESSOURCE
+    return  this.notificationService.notifyReceivers(team,userId,message,message,event)
+
   }
 }
