@@ -10,6 +10,7 @@ import { AlertDto } from './dto/alert.dto';
 import { UserService } from '@src/user/user.service';
 import { Team } from '@src/team/entities/team.entity';
 import { User } from '@src/user/entities/user.entity';
+import { EventType } from '@src/enum/event-type.enum';
 
 @Injectable()
 export class NotificationService extends GenericService<Notification> {
@@ -39,7 +40,7 @@ export class NotificationService extends GenericService<Notification> {
         
     //     })
     const team=await this.teamService.findOne(teamId)
-    return this.notifyReceivers(team,userId,data.message,data.message,data.event)
+    return this.notifyReceivers(team,userId,data.message,data.message,EventType.TEAM_ALERT)
 
   }
 

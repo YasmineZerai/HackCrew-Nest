@@ -6,7 +6,7 @@ import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { use } from 'passport';
 
 @Controller('sse')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 
 export class SseController {
   constructor(private readonly sseService: SseService) {}
@@ -14,8 +14,8 @@ export class SseController {
   getEvents(
     @Param('id') id: number,@ConnectedUser() user : any
   ): Observable<{ data: any; event?: string }> {
-    console.log(user.id)
-    return this.sseService.connect(Number(user.id));
+    // console.log(user.id)
+    return this.sseService.connect(Number(id));
   }
   @Post('notify-user')
   notifyUser(@Body() body : {userId:number,data:any,event:string}) {
