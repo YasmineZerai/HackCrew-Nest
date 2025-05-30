@@ -17,9 +17,9 @@ export class CreateRessourceDto {
   @ApiProperty()
   @IsOptional()
   teamId?: number;
-  @ApiProperty()
-  @IsOptional()
-  userId?: number;
+  // @ApiProperty()
+  // @IsOptional()
+  // userId?: number;
   @ApiProperty({
     type: 'string',
     format: 'binary',

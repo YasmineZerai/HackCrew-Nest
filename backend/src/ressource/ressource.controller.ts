@@ -21,6 +21,7 @@ import { extname } from 'path';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiProduces, ApiResponse } from '@nestjs/swagger';
 import { Ressource } from './entities/ressource.entity';
 import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
+import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 
 @Controller('ressources')
 @UseGuards(JwtAuthGuard)
@@ -47,11 +48,14 @@ export class RessourcesController {
       }),
     }),
   )
-  create(
+  async create(
     @Body() createRessourceDto: CreateRessourceDto,
     @UploadedFile() file: Express.Multer.File,
+    @ConnectedUser() user : any
   ) {
-    return this.ressourcesService.create(createRessourceDto, file);
+    const newRessource = await  this.ressourcesService.create(createRessourceDto, file);
+    this.ressourcesService.notifyTeamMembers(newRessource,user.id)
+    return newRessource
   }
 
   @Get()

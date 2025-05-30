@@ -7,12 +7,17 @@ import { CreateRessourceDto } from './dto/create-ressource.dto';
 import { UpdateRessourceDto } from './dto/update-ressource.dto';
 import { join } from 'path';
 import { GenericService } from '@src/common/services/generic.service';
+import { NotificationService } from '@src/notification/notification.service';
+import { TeamService } from '@src/team/team.service';
+import { EventType } from '@src/enum/event-type.enum';
 
 @Injectable()
 export class RessourcesService extends GenericService<Ressource>  {
   constructor(
     @InjectRepository(Ressource)
     private readonly ressourceRepository: Repository<Ressource>,
+    private readonly notificationService : NotificationService,
+    private readonly teamService : TeamService
   ) {
         super(ressourceRepository)
 
@@ -109,5 +114,15 @@ export class RessourcesService extends GenericService<Ressource>  {
     }
 
     return createReadStream(filePath);
+  }
+
+  async notifyTeamMembers(ressource:Ressource,userId:number){
+    const team = await this.teamService.findOneBy(
+            { id: ressource.team.id },
+        );
+    const message = `Ressource "${ressource.id}" is created.`;
+    const event = EventType.NEW_RESSOURCE
+    return  this.notificationService.notifyReceivers(team,userId,message,message,event)
+
   }
 }
