@@ -1,6 +1,6 @@
-import { Subscriber } from "rxjs";
+import { Subscriber } from 'rxjs';
 
 export interface ConnectedClient {
-    userId:string;
-    subscriber : Subscriber<{data:any;event?:string}>
+  userId: number;
+  subscriber: Subscriber<{ data: any; event?: string }>;
 }
