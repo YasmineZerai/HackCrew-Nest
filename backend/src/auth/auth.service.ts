@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -9,14 +10,15 @@ import { LoginDto, RegisterDto } from '@src/core/zod-schemas/auth.schema';
 import { UserResponse, LoginResponse } from './interfaces/auth.interface';
 import { instanceToPlain } from 'class-transformer';
 import { User } from '@src/user/entities/user.entity';
+import { Inject, forwardRef } from '@nestjs/common';
+import { BlacklistService } from '../blacklist/blacklist.service';
 
 @Injectable()
 export class AuthService {
-  private tokenBlacklist: Set<string> = new Set();
-
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
+    @Inject(BlacklistService) private readonly blacklistService: BlacklistService,
   ) {}
 
   async validateUser(
@@ -46,7 +48,7 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<LoginResponse> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new BadRequestException('Invalid credentials');
     }
 
     const payload = {
@@ -70,10 +72,10 @@ export class AuthService {
   }
 
   async logout(token: string): Promise<void> {
-    this.tokenBlacklist.add(token);
+    await this.blacklistService.addToken(token);
   }
 
-  isTokenBlacklisted(token: string): boolean {
-    return this.tokenBlacklist.has(token);
+  async isTokenBlacklisted(token: string): Promise<boolean> {
+    return this.blacklistService.isTokenBlacklisted(token);
   }
 }

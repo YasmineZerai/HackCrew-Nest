@@ -10,12 +10,15 @@ import {
   HttpStatus,
   UseInterceptors,
   ClassSerializerInterceptor,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiResponse } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
+import { ConnectedUser } from '@src/auth/decorators/user.decorator';
+import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -27,6 +30,11 @@ export class UserController {
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  findLoggedUser(@ConnectedUser() user) {
+    return this.userService.findOne(user.id);
   }
 
   @Get(':id')
