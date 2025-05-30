@@ -1,4 +1,4 @@
-import { Field, Int } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Timestamp } from 'src/common/entities/timestamp.entity';
@@ -16,7 +16,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
+@ObjectType()
 @Entity('users')
 export class User extends Timestamp {
   @ApiProperty()

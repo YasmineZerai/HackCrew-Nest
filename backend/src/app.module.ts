@@ -16,9 +16,16 @@ import { NotificationModule } from './notification/notification.module';
 import { MessageModule } from './message/message.module';
 import { SocketModule } from './socket/socket.module';
 import { SwaggerModule } from './swagger/swagger.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import {join} from 'path';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'), // or true
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
