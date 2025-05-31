@@ -22,7 +22,7 @@ export class CreateTodoDto {
   @IsOptional()
   status?: TodoStatus;
   @ApiProperty()
-  @IsDateString()
+  @IsDate()
   @Type(() => Date)
   dueDate: Date;
   @ApiProperty()
