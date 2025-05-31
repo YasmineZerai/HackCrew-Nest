@@ -25,10 +25,4 @@ export class CreateTodoDto {
   @IsDate()
   @Type(() => Date)
   dueDate: Date;
-  @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  @Min(1)
-  @Type(() => Number)
-  teamId?: number;
 }
