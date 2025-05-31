@@ -14,27 +14,36 @@ export class MessageSocketService {
   ) {}
 
   async handleTeamMessage(client: AuthenticatedSocket, message: any) {
-    const team = await this.teamService.findOneBy(message.teamId);
-    if (team.id) {
+    let team;
+    try {
+      team = await this.teamService.findOne(message.teamId);
+    } catch (error) {
+      throw new WsException('invalid team');
+    }
+    if (!team) {
+      throw new WsException('invalid Team');
+    }
+    if (team) {
       const isMember = this.teamService.isMember(team, client.data.user.id);
-      console.log(isMember);
       if (isMember) {
-        this.socketService.sendToRoom({
-          client,
-          room: `team_${message.teamId}`,
-          message: {
-            ...message,
-            sender: client.data.user,
-            timestamp: new Date(),
-          },
-          event: 'recieve-team-message',
-        });
         const user = await this.socketService.getUser(client);
         if (user) {
-          this.messageService.createMessage(user, {
+          const newMessage = await this.messageService.createMessage(user, {
             content: message.content,
             teamId: message.teamId,
           });
+          if (newMessage)
+            this.socketService.sendToRoom({
+              client,
+              room: `team_${message.teamId}`,
+              message: {
+                ...message,
+                id: newMessage.id,
+                sender: client.data.user,
+                timestamp: new Date(),
+              },
+              event: 'recieve-team-message',
+            });
           return { success: true };
         }
       }
