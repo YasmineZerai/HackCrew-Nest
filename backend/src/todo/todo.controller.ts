@@ -60,10 +60,7 @@ export class TodoController {
         @Param('teamId',ParseIntPipe) teamId : number,
         @ConnectedUser() user: AuthUser,
     ): Promise<Todo> {
-        return this.todoService.create({
-            ...createTodoDto,
-            user: { id: user.id },
-        });
+        return await this.todoService.createTodo(createTodoDto,teamId,user.id)
     }
 
     @Patch(':id')

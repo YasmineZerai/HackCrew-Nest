@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Todo } from './todo.entity';
 import { Repository } from 'typeorm';
@@ -10,6 +10,7 @@ import { TodoFilterDto } from '../dto/filter-todo.dto';
 import { NotificationService } from '@src/notification/notification.service';
 import { UserService } from '@src/user/user.service';
 import { EventType } from '@src/enum/event-type.enum';
+import { CreateTodoDto } from '../dto/create-todo.dto';
 
 @Injectable()
 export class TodoService extends GenericService<Todo> {
@@ -17,10 +18,24 @@ export class TodoService extends GenericService<Todo> {
     @InjectRepository(Todo)
     private readonly todoRepo: Repository<Todo>,
     private readonly teamService: TeamService,
+    private readonly userService : UserService,
     private readonly sseService: SseService,
     private readonly notificationService: NotificationService,
   ) {
     super(todoRepo);
+  }
+
+  async createTodo(createTodoDto : CreateTodoDto,teamId:number,userId:number){
+    const newTodo = await this.create(createTodoDto)
+    const team = await this.teamService.findOne(teamId)
+    const user = await this.userService.findOne(userId)
+    if(!user || !team){
+      throw new NotFoundException()
+    } 
+    newTodo.user=user;
+    newTodo.team=team
+    return await this.todoRepo.save(newTodo)
+
   }
 
   async findByUser(userId: number, filter: TodoFilterDto): Promise<Todo[]> {
