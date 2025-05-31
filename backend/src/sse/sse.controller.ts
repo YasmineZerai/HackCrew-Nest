@@ -9,7 +9,7 @@ import { use } from 'passport';
 @UseGuards(JwtAuthGuard)
 export class SseController {
   constructor(private readonly sseService: SseService) {}
-  @Sse(':id')
+  @Sse()
   getEvents(
     @ConnectedUser() user: any,
   ): Observable<{ data: any; event?: string }> {
