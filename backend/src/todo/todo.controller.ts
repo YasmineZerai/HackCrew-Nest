@@ -53,10 +53,11 @@ export class TodoController {
         return this.todoService.findByUserAndTeam(userId, teamId, filter);
     }
 
-    @Post()
+    @Post('team/:teamId')
     @ApiResponse({type:Todo})
     async create(
         @Body() createTodoDto: CreateTodoDto,
+        @Param('teamId',ParseIntPipe) teamId : number,
         @ConnectedUser() user: AuthUser,
     ): Promise<Todo> {
         return this.todoService.create({
