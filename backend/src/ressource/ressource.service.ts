@@ -13,7 +13,7 @@ import { EventType } from '@src/enum/event-type.enum';
 import { UserService } from '@src/user/user.service';
 
 @Injectable()
-export class RessourcesService extends GenericService<Ressource>  {
+export class RessourcesService extends GenericService<Ressource> {
   constructor(
     @InjectRepository(Ressource)
     private readonly ressourceRepository: Repository<Ressource>,
@@ -21,8 +21,7 @@ export class RessourcesService extends GenericService<Ressource>  {
     private readonly teamService : TeamService,
     private readonly userService : UserService
   ) {
-        super(ressourceRepository)
-
+    super(ressourceRepository);
   }
 
   async createRessource(
@@ -48,18 +47,6 @@ export class RessourcesService extends GenericService<Ressource>  {
 
     return this.ressourceRepository.save(ressource);
   }
-
-  // async findAll() {
-  //   return this.ressourceRepository.find();
-  // }
-
-  // async findOne(id: number) {
-  //   const ressource = await this.ressourceRepository.findOne({ where: { id } });
-  //   if (!ressource) {
-  //     throw new NotFoundException(`Ressource with ID ${id} not found`);
-  //   }
-  //   return ressource;
-  // }
 
   async update(
     id: number,
