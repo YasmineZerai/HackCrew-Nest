@@ -14,9 +14,10 @@ export class MessageSocketService {
   ) {}
 
   async handleTeamMessage(client: AuthenticatedSocket, message: any) {
-    const team = await this.teamService.findOne(message.teamId);
-    if (team) {
+    const team = await this.teamService.findOneBy(message.teamId);
+    if (team.id) {
       const isMember = this.teamService.isMember(team, client.data.user.id);
+      console.log(isMember);
       if (isMember) {
         this.socketService.sendToRoom({
           client,
@@ -38,7 +39,6 @@ export class MessageSocketService {
         }
       }
     }
-
     throw new WsException('Invalid Team');
   }
 }

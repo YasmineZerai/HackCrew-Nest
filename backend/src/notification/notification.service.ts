@@ -18,13 +18,13 @@ export class NotificationService extends GenericService<Notification> {
     @InjectRepository(Notification)
     private readonly notificationRepository: Repository<Notification>,
     private readonly teamService: TeamService,
-    private readonly sseService : SseService,
-    private readonly userService : UserService
+    private readonly sseService: SseService,
+    private readonly userService: UserService,
   ) {
     super(notificationRepository);
   }
 
-  async notifyTeam(userId: number, data:AlertDto, teamId: number) {
+  async notifyTeam(userId: number, data: AlertDto, teamId: number) {
     // const team=await this.teamService.findOne(teamId)
     // const memberships=team.memberships
     // if (!memberships) return;
@@ -37,50 +37,54 @@ export class NotificationService extends GenericService<Notification> {
     //       // const notification=await this.create({content:data.message,user:user})
     //       await this.createNotification(item,data.message)
     //     }).catch((err)=>console.log(err))
-        
+
     //     })
-    const team=await this.teamService.findOne(teamId)
-    return this.notifyReceivers(team,userId,data.message,data.message,EventType.TEAM_ALERT)
-
+    const team = await this.teamService.findOne(teamId);
+    return this.notifyReceivers(
+      team,
+      userId,
+      data.message,
+      data.message,
+      EventType.TEAM_ALERT,
+    );
   }
 
-  async createNotification(receiverId:number,content:string):Promise<Notification>{
-
-
-    const user = await this.userService.findOne(receiverId)
-    if(!user){
-      throw new NotFoundException(`user with ID ${receiverId} does not exist`)
+  async createNotification(
+    receiverId: number,
+    content: string,
+  ): Promise<Notification> {
+    const user = await this.userService.findOne(receiverId);
+    if (!user) {
+      throw new NotFoundException(`user with ID ${receiverId} does not exist`);
     }
-    return await this.create({content,user:user})
-    
-
-
+    return await this.create({ content, user: user });
   }
 
-   notifyReceivers(team:Team,userId:number,data:any,message:string,event:string){
-
+  notifyReceivers(
+    team: Team,
+    userId: number,
+    data: any,
+    message: string,
+    event: string,
+  ) {
     const receiversIds = team.memberships
       .filter((membership) => membership.user.id !== userId)
       .map((membership) => membership.user.id);
 
     if (receiversIds.length === 0) return;
 
-
-     receiversIds.map(async (item) => {
+    receiversIds.map(async (item) => {
       this.sseService.notifyUser(
         item,
         {
           data,
+          senderId: userId,
+          teamId: team.id,
         },
         event,
       );
 
       await this.createNotification(item, message);
     });
-
-
-
   }
-    
-
 }
