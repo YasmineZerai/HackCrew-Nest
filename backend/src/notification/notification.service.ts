@@ -25,20 +25,6 @@ export class NotificationService extends GenericService<Notification> {
   }
 
   async notifyTeam(userId: number, data: AlertDto, teamId: number) {
-    // const team=await this.teamService.findOne(teamId)
-    // const memberships=team.memberships
-    // if (!memberships) return;
-    // const recipients = memberships
-    //   .map((m) => m.user.id)
-    //   .filter((id) => id !== userId)
-    // recipients.map((item)=>{
-    //     axios.post('http://localhost:5000/sse/notify-user',{userId:item,data:data.message,event:data.event}).then(async(res)=>{
-    //       // const user = await this.userService.findOne(item)
-    //       // const notification=await this.create({content:data.message,user:user})
-    //       await this.createNotification(item,data.message)
-    //     }).catch((err)=>console.log(err))
-
-    //     })
     const team = await this.teamService.findOne(teamId);
     return this.notifyReceivers(
       team,
