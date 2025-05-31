@@ -10,6 +10,7 @@ import { multerConfig, fileFilter } from '@src/ressource/multer.config';
 import { NotificationModule } from '@src/notification/notification.module';
 import { TeamModule } from '@src/team/team.module';
 import { UserModule } from '@src/user/user.module';
+import { RessourceResolver } from './ressource.resolver';
 
 @Module({
   imports: [
@@ -23,6 +24,8 @@ import { UserModule } from '@src/user/user.module';
     }),
   ],
   controllers: [RessourcesController],
-  providers: [RessourcesService, MulterModule],
+
+  providers: [RessourcesService, RessourceResolver,MulterModule],
+
 })
 export class RessourceModule {}

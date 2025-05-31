@@ -120,4 +120,23 @@ export class RessourcesService extends GenericService<Ressource> {
     return  this.notificationService.notifyReceivers(team,userId,message,message,event)
 
   }
+    async findAll(): Promise<Ressource[]> {
+    return this.ressourceRepository.find({
+      relations: ['user', 'team'],
+    });
+  }
+
+    async findOneRessource(id: number){
+    return this.ressourceRepository.findOne({
+      where: { id },
+      relations: ['user', 'team'],
+    });
+  }
+    async findByTeam(teamId: number): Promise<Ressource[]> {
+    return this.ressourceRepository.find({
+      where: { team: { id: teamId } },
+      relations: ['team', 'user'],
+    });
+  }
+
 }

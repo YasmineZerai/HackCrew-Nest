@@ -13,13 +13,16 @@ import { Code } from './code.entity';
 import { Ressource } from 'src/ressource/entities/ressource.entity';
 import { Message } from 'src/message/entities/message.entity';
 import { ApiProperty } from '@nestjs/swagger';
-
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+@ObjectType()
 @Entity('teams')
 export class Team extends Timestamp {
   @ApiProperty()
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
   @ApiProperty()
+  @Field()
   @Column()
   name: string;
 
@@ -32,7 +35,7 @@ export class Team extends Timestamp {
   @OneToOne(() => Code, (code) => code.team)
   @JoinColumn()
   code: Code;
-
+  @Field(() => [Ressource])
   @OneToMany(() => Ressource, (ressource) => ressource.team)
   ressources: Ressource[];
 

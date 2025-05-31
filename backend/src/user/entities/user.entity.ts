@@ -1,3 +1,4 @@
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Timestamp } from 'src/common/entities/timestamp.entity';
@@ -15,23 +16,28 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
+@ObjectType()
 @Entity('users')
 export class User extends Timestamp {
   @ApiProperty()
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
   @ApiProperty()
+  @Field()
   @Column()
   username: string;
   @ApiProperty()
+  @Field()
   @Column()
-  firstName : string
+  firstName: string;
   @ApiProperty()
+  @Field()
   @Column()
-  lastName : string
+  lastName: string;
 
   @ApiProperty()
+  @Field()
   @Column()
   email: string;
   @ApiProperty()
@@ -48,7 +54,7 @@ export class User extends Timestamp {
   @OneToOne(() => Profile, (profile) => profile.user)
   @JoinColumn()
   profile: Profile;
-
+  @Field(() => [Ressource])
   @OneToMany(() => Ressource, (ressource) => ressource.user)
   @Exclude()
   ressources: Ressource[];

@@ -1,0 +1,58 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Todo {
+  id: Int!
+  task: String!
+  status: TodoStatus!
+  dueDate: DateTime!
+  user: User!
+  team: Team!
+}
+
+"""The status of a Todo"""
+enum TodoStatus {
+  TODO
+  DOING
+  DONE
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Ressource {
+  id: Int!
+  title: String!
+  description: String!
+  link: String
+  path: String
+  team: Team!
+  user: User!
+}
+
+type Team {
+  id: Int!
+  name: String!
+  ressources: [Ressource!]!
+}
+
+type User {
+  id: Int!
+  username: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  ressources: [Ressource!]!
+}
+
+type Query {
+  findAllRessources: [Ressource!]!
+  findOneRessource(id: Int!): Ressource!
+  getRessourcesByTeam(teamId: Int!): [Ressource!]!
+  getAllTodos: [Todo!]!
+  getOneTodo(id: Int!): Todo!
+  getTodoByTeam(teamId: Int!, status: TodoStatus): [Todo!]!
+}
