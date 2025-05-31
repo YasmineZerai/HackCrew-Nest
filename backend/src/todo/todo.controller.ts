@@ -21,10 +21,12 @@ import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { AuthUser } from '@src/auth/interfaces/auth.interface';
 import { Filter } from '@src/common/decorators/filter.decorator';
 import { TodoFilterDto } from './dto/filter-todo.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
-@UseGuards(JwtAuthGuard)
 @Controller('todos')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('JWT-auth')
+
 export class TodoController {
     constructor(private readonly todoService: TodoService) { }
 
