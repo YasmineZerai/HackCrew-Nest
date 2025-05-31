@@ -7,9 +7,15 @@ export class Code {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
+
+  @ApiProperty()
+  @Column({ unique: true })
+  value: number;
+
   @ApiProperty()
   @Column({ type: 'timestamp' })
   expiresAt: Date;
+
   @ApiProperty()
   @Column({ default: false })
   isExpired: boolean;

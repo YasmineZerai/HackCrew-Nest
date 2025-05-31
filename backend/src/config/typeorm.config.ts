@@ -38,12 +38,11 @@ export const typeOrmConfig = (
     Message,
     BlacklistToken,
   ],
-  // migrations: [join(__dirname, '../../migrations', '*.{ts,js}')],
-  // synchronize: true,
-  // synchronize: true,
-  // logging: ['error', 'warn'],
-  // logger: 'simple-console',
-  // migrationsRun: false,
+  migrations: [join(__dirname, '../../migrations', '*.{ts,js}')],
+  synchronize: true,
+  logging: ['error', 'warn'],
+  logger: 'simple-console',
+  migrationsRun: false,
 });
 
 const dataSource = new DataSource({
@@ -66,7 +65,7 @@ const dataSource = new DataSource({
     BlacklistToken,
   ],
   migrations: [join(__dirname, '../../migrations', '*.{ts,js}')],
-  synchronize: false,
+  synchronize: true,
   logging: ['error', 'warn'],
   logger: 'simple-console',
 } as DataSourceOptions);
