@@ -118,10 +118,7 @@ export class TeamService extends GenericService<Team> {
     }
   }
 
-  async getTeamCode(
-    teamId: number,
-    userId: number,
-  ): Promise<Code | { isExpired: true; message: string }> {
+  async getTeamCode(teamId: number, userId: number): Promise<Code> {
     try {
       const team = await this.findOne(teamId);
 
@@ -133,19 +130,15 @@ export class TeamService extends GenericService<Team> {
 
       // If no code exists
       if (!team.code) {
-        return {
-          isExpired: true,
-          message: 'No code exists. Please generate a new code.',
-        };
+        ErrorHandler.badRequest('No code exists. Please generate a new code.');
       }
 
       const isExpired = await this.checkAndHandleExpiredCode(team.code, false);
 
       if (isExpired) {
-        return {
-          isExpired: true,
-          message: 'Code has expired. Please generate a new code.',
-        };
+        ErrorHandler.badRequest(
+          'Code has expired. Please generate a new code.',
+        );
       }
 
       return team.code;

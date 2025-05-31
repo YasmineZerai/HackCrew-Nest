@@ -31,7 +31,7 @@ export class MembershipService {
     try {
       const codeNumber = parseInt(code);
       if (isNaN(codeNumber)) {
-        ErrorHandler.badRequest('Invalid code format');
+        return ErrorHandler.badRequest('Invalid code format');
       }
 
       const team = await this.teamService.findTeamByCode(codeNumber);
@@ -41,7 +41,7 @@ export class MembershipService {
       );
 
       if (existingMembership) {
-        ErrorHandler.conflict('You are already a member of this team');
+        return ErrorHandler.conflict('You are already a member of this team');
       }
 
       await this.joinTeam(user, team);
@@ -50,7 +50,7 @@ export class MembershipService {
 
       return team;
     } catch (error) {
-      ErrorHandler.handleError(error);
+      return ErrorHandler.handleError(error);
     }
   }
 
@@ -214,6 +214,12 @@ export class MembershipService {
     //   await this.notificationService.createNotification(item, message);
     // });
 
-    return  this.notificationService.notifyReceivers(team,newUser.id,notificationData,message,EventType.TEAM_JOIN)
+    return this.notificationService.notifyReceivers(
+      team,
+      newUser.id,
+      notificationData,
+      message,
+      EventType.TEAM_JOIN,
+    );
   }
 }
