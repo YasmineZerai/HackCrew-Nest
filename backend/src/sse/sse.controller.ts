@@ -6,19 +6,17 @@ import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { use } from 'passport';
 
 @Controller('sse')
-// @UseGuards(JwtAuthGuard)
-
+@UseGuards(JwtAuthGuard)
 export class SseController {
   constructor(private readonly sseService: SseService) {}
-  @Sse(':id')
+  @Sse()
   getEvents(
-    @Param('id') id: number,@ConnectedUser() user : any
+    @ConnectedUser() user: any,
   ): Observable<{ data: any; event?: string }> {
-    // console.log(user.id)
-    return this.sseService.connect(Number(id));
+    return this.sseService.connect(Number(user.id));
   }
   @Post('notify-user')
-  notifyUser(@Body() body : {userId:number,data:any,event:string}) {
+  notifyUser(@Body() body: { userId: number; data: any; event: string }) {
     this.sseService.notifyUser(body.userId, body.data, body.event);
   }
 }

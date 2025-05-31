@@ -16,9 +16,13 @@ import { NotificationModule } from './notification/notification.module';
 import { MessageModule } from './message/message.module';
 import { SocketModule } from './socket/socket.module';
 import { SwaggerModule } from './swagger/swagger.module';
+
 import { GraphQLModule } from '@nestjs/graphql';
 import {join} from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+
+import { BlacklistModule } from './blacklist/blacklist.module';
+
 
 @Module({
   imports: [
@@ -47,6 +51,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
     NotificationModule,
     MessageModule,
     SocketModule,
+    BlacklistModule,
   ],
   controllers: [AppController],
   providers: [AppService],

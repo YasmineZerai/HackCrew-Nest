@@ -9,6 +9,7 @@ import { Membership } from '@src/membership/entities/membership.entity';
 import { Code } from '@src/team/entities/code.entity';
 import { Notification } from '@src/notification/entities/notification.entity';
 import { Message } from '@src/message/entities/message.entity';
+import { BlacklistToken } from '../blacklist/entities/blacklist-token.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
 import { join } from 'path';
@@ -35,36 +36,38 @@ export const typeOrmConfig = (
     Membership,
     Notification,
     Message,
+    BlacklistToken,
   ],
-  // migrations: [join(__dirname, '../../migrations', '*.{ts,js}')],
+  migrations: [join(__dirname, '../../migrations', '*.{ts,js}')],
   synchronize: true,
-  // logging: ['error', 'warn'],
-  // logger: 'simple-console',
-  // migrationsRun: false,
+  logging: ['error', 'warn'],
+  logger: 'simple-console',
+  migrationsRun: false,
 });
 
-// const dataSource = new DataSource({
-//   type: 'mysql',
-//   host: process.env.DB_HOST,
-//   port: process.env.DB_PORT,
-//   username: process.env.DB_USERNAME,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-//   entities: [
-//     User,
-//     Team,
-//     Profile,
-//     Ressource,
-//     Todo,
-//     Code,
-//     Membership,
-//     Notification,
-//     Message,
-//   ],
-//   migrations: [join(__dirname, '../../migrations', '*.{ts,js}')],
-//   synchronize: false,
-//   logging: ['error', 'warn'],
-//   logger: 'simple-console',
-// } as DataSourceOptions);
+const dataSource = new DataSource({
+  type: 'mysql',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  entities: [
+    User,
+    Team,
+    Profile,
+    Ressource,
+    Todo,
+    Code,
+    Membership,
+    Notification,
+    Message,
+    BlacklistToken,
+  ],
+  migrations: [join(__dirname, '../../migrations', '*.{ts,js}')],
+  synchronize: true,
+  logging: ['error', 'warn'],
+  logger: 'simple-console',
+} as DataSourceOptions);
 
-// export default dataSource;
+export default dataSource;

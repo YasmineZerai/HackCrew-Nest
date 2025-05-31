@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Put,
-  
   StreamableFile,
   UploadedFile,
   UseGuards,
@@ -15,84 +14,79 @@ import {
 import { RessourcesService } from './ressource.service';
 import { CreateRessourceDto } from './dto/create-ressource.dto';
 import { UpdateRessourceDto } from './dto/update-ressource.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiProduces, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOkResponse,
+  ApiProduces,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { Ressource } from './entities/ressource.entity';
 import { JwtAuthGuard } from '@src/auth/guards/jwt.guard';
 import { ConnectedUser } from '@src/auth/decorators/user.decorator';
+import { FileUploadInterceptor } from '@src/ressource/file-upload.interceptor';
 
 @Controller('ressources')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth('JWT-auth')
-
 export class RessourcesController {
   constructor(private readonly ressourcesService: RessourcesService) {}
 
   @Post(':teamId')
   @ApiConsumes('multipart/form-data')
-  @ApiResponse({type:Ressource})
-
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          return cb(null, `${randomName}${extname(file.originalname)}`);
-        },
-      }),
-    }),
-  )
+  @ApiResponse({ type: Ressource })
+  @UseInterceptors(FileUploadInterceptor)
   async create(
     @Body() createRessourceDto: CreateRessourceDto,
     @UploadedFile() file: Express.Multer.File,
-    @ConnectedUser() user : any,
-    @Param('teamId') teamId : number
+    @ConnectedUser() user: any,
+    @Param('teamId') teamId: number,
   ) {
-    const newRessource = await  this.ressourcesService.createRessource(createRessourceDto,user.id,teamId,file);
+    const newRessource = await this.ressourcesService.createRessource(
+      createRessourceDto,
+      user.id,
+      teamId,
+      file,
+    );
     this.ressourcesService.notifyTeamMembers(newRessource.team.id,user.id)
-    return newRessource
+    return newRessource;
   }
 
   @Get()
-  @ApiResponse({type:[Ressource]})
+  @ApiResponse({ type: [Ressource] })
   findAll() {
     return this.ressourcesService.findAll();
   }
 
   @Get(':id')
-  @ApiResponse({type:Ressource})
+  @ApiResponse({ type: Ressource })
   findOne(@Param('id') id: string) {
     return this.ressourcesService.findOne(+id);
   }
 
   @Get(':id/file')
   @ApiOkResponse({
-  description: 'Returns the requested file',
-  content: {
-    'application/octet-stream': {
-      schema: {
-        type: 'string',
-        format: 'binary',
+    description: 'Returns the requested file',
+    content: {
+      'application/octet-stream': {
+        schema: {
+          type: 'string',
+          format: 'binary',
+        },
       },
     },
-  },
-})
-@ApiProduces('application/octet-stream')
+  })
+  @ApiProduces('application/octet-stream')
   async getFile(@Param('id') id: string) {
     const fileStream = await this.ressourcesService.getFileStream(+id);
     return new StreamableFile(fileStream);
   }
 
   @Put(':id')
-  @ApiResponse({type:Ressource})
+  @ApiResponse({ type: Ressource })
   @ApiConsumes('multipart/form-data')
-   @ApiBody({
+  @ApiBody({
     description: 'Form data for ressource',
     schema: {
       type: 'object',
@@ -100,8 +94,6 @@ export class RessourcesController {
         title: { type: 'string', description: 'Ressource title' },
         description: { type: 'string', description: 'Ressource description' },
 
-        
-        
         file: {
           type: 'string',
           format: 'binary',
@@ -109,21 +101,8 @@ export class RessourcesController {
         },
       },
     },
-  })  
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          return cb(null, `${randomName}${extname(file.originalname)}`);
-        },
-      }),
-    }),
-  )
+  })
+  @UseInterceptors(FileUploadInterceptor)
   update(
     @Param('id') id: string,
     @Body() updateRessourceDto: UpdateRessourceDto,
@@ -133,7 +112,7 @@ export class RessourcesController {
   }
 
   @Delete(':id')
-  @ApiResponse({type:Ressource})
+  @ApiResponse({ type: Ressource })
   remove(@Param('id') id: string) {
     return this.ressourcesService.remove(+id);
   }

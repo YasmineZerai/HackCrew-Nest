@@ -62,12 +62,15 @@ export class TodoService extends GenericService<Todo> {
       'memberships.user',
     ]);
 
+
     if (!team?.memberships) return;
+
 
     // const recipients = team.memberships
     //     .map((m) => m.user.id)
     //     .filter((id) => id !== actorId)
     //     // .map((id) => id.toString());
+
 
     const message = `Todo "${todo.task}" status updated to "${status}".`;
     const event = EventType.UPDATE_TODO;
@@ -98,6 +101,9 @@ export class TodoService extends GenericService<Todo> {
       event,
     );
   }
+
+       return  this.notificationService.notifyReceivers(team,actorId,message,message,event)
+
 
   async findAllTodos(): Promise<Todo[]> {
     return this.todoRepo.find({

@@ -49,10 +49,10 @@ export class SocketGateway
   }
   @SubscribeMessage('send-message-to-team')
   @UsePipes(new WsZodPipe(ChatMessageSchema))
-  handleTeamMessage(
+  async handleTeamMessage(
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() message: ChatMessage,
   ) {
-    return this.messageSocketService.handleTeamMessage(client, message);
+    return await this.messageSocketService.handleTeamMessage(client, message);
   }
 }

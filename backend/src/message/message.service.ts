@@ -42,7 +42,7 @@ export class MessageService extends GenericService<Message> {
         return this.messageRepository.find({
           where: { team: { id: teamId } },
           relations: this.relations,
-          order: { createdAt: 'DESC' },
+          order: { createdAt: 'ASC' },
         });
       }
     }

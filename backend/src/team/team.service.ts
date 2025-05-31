@@ -13,7 +13,6 @@ import { ConfigService } from '@nestjs/config';
 import { User } from '@src/user/entities/user.entity';
 import { Membership } from '@src/membership/entities/membership.entity';
 import { instanceToPlain } from 'class-transformer';
-import { unknown } from 'zod';
 
 @Injectable()
 export class TeamService extends GenericService<Team> {
@@ -89,14 +88,14 @@ export class TeamService extends GenericService<Team> {
       }
 
       // Generate a numeric code between 100000 and 999999
-      const codeId = Math.floor(100000 + Math.random() * 900000);
+      const codeValue = Math.floor(100000 + Math.random() * 900000);
 
       // Set expiration to exactly 1 hour from now
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + 1);
 
       const code = this.codeRepo.create({
-        id: codeId,
+        value: codeValue,
         expiresAt,
         isExpired: false,
         team,
@@ -128,12 +127,16 @@ export class TeamService extends GenericService<Team> {
           'You do not have permission to view this team code',
         );
       }
-      if (!team.code) return null;
-      const isExpired = await this.checkAndHandleExpiredCode(team.code);
-      if (isExpired || !team.code) {
-        return null;
+
+      if (team.code) {
+        const isExpired = await this.checkAndHandleExpiredCode(
+          team.code,
+          false,
+        );
+        if (isExpired) return null;
+        return team.code;
       }
-      return team.code;
+      return null;
     } catch (error) {
       ErrorHandler.handleError(error);
     }
@@ -230,7 +233,7 @@ export class TeamService extends GenericService<Team> {
       const team = await this.teamRepo.findOne({
         where: {
           code: {
-            id: code,
+            value: code,
           },
         },
         relations: ['code', 'memberships', 'memberships.user'],
