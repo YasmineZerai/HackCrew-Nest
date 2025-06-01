@@ -34,7 +34,7 @@ export class TodoService extends GenericService<Todo> {
     } 
     newTodo.user=user;
     newTodo.team=team;
-    const message = `Todo "${newTodo.task}" is created .`;
+    const message = `Todo "${newTodo.task}" is created by "${user.username}" .`;
     const event = EventType.NEW_TODO;
     this.notificationService.notifyReceivers(team,userId,message,message,event)
     return await this.todoRepo.save(newTodo)
