@@ -87,7 +87,14 @@ export class TodoController {
             await this.todoService.notifyTeamMembersIfNecessary(updatedTodo, updateTodoDto.status, userId);
         }
 
-        return updatedTodo;
+        const newUpdatedTodo= await this.todoService.findOneTodo(updatedTodo.id)
+        if(!newUpdatedTodo){
+            throw new NotFoundException()
+        }
+        return newUpdatedTodo
+
+        
+
     }
 
 
