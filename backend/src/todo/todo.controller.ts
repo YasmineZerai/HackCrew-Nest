@@ -33,7 +33,7 @@ export class TodoController {
 
     @Get(':id')
     @ApiResponse({type:Todo})
-    async getTodo(@Param('id',ParseIntPipe)id:number){
+    async getTodo(@Param('id',ParseIntPipe)id :number){
         return await this.todoService.findOne(id)
     }
 
