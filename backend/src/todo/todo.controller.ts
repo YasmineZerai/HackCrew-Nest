@@ -21,10 +21,12 @@ import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import { AuthUser } from '@src/auth/interfaces/auth.interface';
 import { Filter } from '@src/common/decorators/filter.decorator';
 import { TodoFilterDto } from './dto/filter-todo.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
-@UseGuards(JwtAuthGuard)
 @Controller('todos')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('JWT-auth')
+
 export class TodoController {
     constructor(private readonly todoService: TodoService) { }
 
@@ -53,16 +55,14 @@ export class TodoController {
         return this.todoService.findByUserAndTeam(userId, teamId, filter);
     }
 
-    @Post()
+    @Post('team/:teamId')
     @ApiResponse({type:Todo})
     async create(
         @Body() createTodoDto: CreateTodoDto,
+        @Param('teamId',ParseIntPipe) teamId : number,
         @ConnectedUser() user: AuthUser,
     ): Promise<Todo> {
-        return this.todoService.create({
-            ...createTodoDto,
-            user: { id: user.id },
-        });
+        return await this.todoService.createTodo(createTodoDto,teamId,user.id)
     }
 
     @Patch(':id')

@@ -39,7 +39,7 @@ export class RessourcesService extends GenericService<Ressource> {
     ressource.team=team;
 
     if (file) {
-      ressource.path = file.path;
+      ressource.path = `/uploads/${file.filename}`;
       ressource.link = '';
     } else if (createRessourceDto.link) {
       ressource.path = '';

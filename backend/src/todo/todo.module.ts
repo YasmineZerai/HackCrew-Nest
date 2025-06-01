@@ -10,7 +10,7 @@ import { UserModule } from '@src/user/user.module';
 import { TodoResolver } from './todo.resolver';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Todo]), TeamModule, SseModule,NotificationModule],
+    imports: [TypeOrmModule.forFeature([Todo]), TeamModule, SseModule,NotificationModule,UserModule],
     providers: [TodoService, TodoResolver],
     controllers: [TodoController],
 })
