@@ -49,7 +49,7 @@ export class RessourcesController {
       teamId,
       file,
     );
-    this.ressourcesService.notifyTeamMembers(newRessource.team.id,user.id)
+    this.ressourcesService.notifyTeamMembers(newRessource.team.id,user.id,newRessource)
     return newRessource;
   }
 

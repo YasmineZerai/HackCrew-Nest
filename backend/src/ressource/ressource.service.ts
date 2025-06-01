@@ -113,11 +113,12 @@ export class RessourcesService extends GenericService<Ressource> {
     return createReadStream(filePath);
   }
 
-  async notifyTeamMembers(teamId:number,userId:number){
+  async notifyTeamMembers(teamId:number,userId:number,newRessource:Partial<Ressource>){
     const team = await this.teamService.findOne(teamId)
     const message = `Ressource  is created.`;
     const event = EventType.NEW_RESSOURCE
-    return  this.notificationService.notifyReceivers(team,userId,message,message,event)
+    const data = {newRessource:newRessource}
+    return  this.notificationService.notifyReceivers(team,userId,data,message,event)
 
   }
     async findAll(): Promise<Ressource[]> {
