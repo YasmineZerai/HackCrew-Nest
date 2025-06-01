@@ -33,7 +33,10 @@ export class TodoService extends GenericService<Todo> {
       throw new NotFoundException()
     } 
     newTodo.user=user;
-    newTodo.team=team
+    newTodo.team=team;
+    const message = `Todo "${newTodo.task}" is created .`;
+    const event = EventType.NEW_TODO;
+    this.notificationService.notifyReceivers(team,userId,message,message,event)
     return await this.todoRepo.save(newTodo)
 
   }
