@@ -108,13 +108,16 @@ export class TodoService extends GenericService<Todo> {
         relations: ['user', 'team'],
       });
     }
-     async findTodoByTeam(teamId: number, status?: TodoStatus): Promise<Todo[]> {
+     async findTodoByTeam(teamId: number,userId?:number, status?: TodoStatus): Promise<Todo[]> {
   const where: any = {
     team: { id: teamId },
   };
 
   if (status) {
     where.status = status;
+  }
+  if(userId){
+    where.user = { id: userId };
   }
 
   return this.todoRepo.find({

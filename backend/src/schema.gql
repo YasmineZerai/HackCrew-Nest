@@ -54,5 +54,5 @@ type Query {
   getRessourcesByTeam(teamId: Int!): [Ressource!]!
   getAllTodos: [Todo!]!
   getOneTodo(id: Int!): Todo!
-  getTodoByTeam(teamId: Int!, status: TodoStatus): [Todo!]!
+  getTodoByTeam(teamId: Int!, status: TodoStatus, userId: Int): [Todo!]!
 }
