@@ -189,10 +189,7 @@ export class MembershipService {
         id: team.id,
         name: team.name,
       },
-      user: {
-        id: newUser.id,
-        name: newUser.username,
-      },
+      user: newUser,
     };
     const message = `user with ID ${newUser.id} and username ${newUser.username} joined your team`;
 

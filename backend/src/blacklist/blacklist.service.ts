@@ -17,7 +17,6 @@ export class BlacklistService {
 
   async isTokenBlacklisted(token: string): Promise<boolean> {
     if (typeof token !== 'string') {
-      console.error('Token is not a string:', token);
       return false;
     }
     const found = await this.blacklistRepository.findOne({ where: { token } });

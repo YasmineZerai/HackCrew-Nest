@@ -18,28 +18,37 @@ export class TodoService extends GenericService<Todo> {
     @InjectRepository(Todo)
     private readonly todoRepo: Repository<Todo>,
     private readonly teamService: TeamService,
-    private readonly userService : UserService,
+    private readonly userService: UserService,
     private readonly sseService: SseService,
     private readonly notificationService: NotificationService,
   ) {
     super(todoRepo);
   }
 
-  async createTodo(createTodoDto : CreateTodoDto,teamId:number,userId:number){
-    const newTodo = await this.create(createTodoDto)
-    const team = await this.teamService.findOne(teamId)
-    const user = await this.userService.findOne(userId)
-    if(!user || !team){
-      throw new NotFoundException()
-    } 
-    newTodo.user=user;
-    newTodo.team=team;
+  async createTodo(
+    createTodoDto: CreateTodoDto,
+    teamId: number,
+    userId: number,
+  ) {
+    const newTodo = await this.create(createTodoDto);
+    const team = await this.teamService.findOne(teamId);
+    const user = await this.userService.findOne(userId);
+    if (!user || !team) {
+      throw new NotFoundException();
+    }
+    newTodo.user = user;
+    newTodo.team = team;
     const message = `Todo "${newTodo.task}" is created by "${user.username}" .`;
-    const data = {newTodo:newTodo}
+    const data = { newTodo: newTodo };
     const event = EventType.NEW_TODO;
-    this.notificationService.notifyReceivers(team,userId,data,message,event)
-    return await this.todoRepo.save(newTodo)
-
+    this.notificationService.notifyReceivers(
+      team,
+      userId,
+      data,
+      message,
+      event,
+    );
+    return await this.todoRepo.save(newTodo);
   }
 
   async findByUser(userId: number, filter: TodoFilterDto): Promise<Todo[]> {
@@ -73,24 +82,12 @@ export class TodoService extends GenericService<Todo> {
     status: TodoStatus,
     actorId: number,
   ) {
-    if (![TodoStatus.DOING, TodoStatus.DONE].includes(status) || !todo.team)
-      return;
-
-    const team = await this.teamService.findOneBy({ id: todo.team.id }, [
-      'memberships',
-      'memberships.user',
-    ]);
-
-
+    const team = await this.teamService.findOne(todo.team.id);
     if (!team?.memberships) return;
-
-
-
     const message = `Todo "${todo.task}" status updated to "${status}".`;
-    const event =status==TodoStatus.DOING?EventType.DOING_TODO:EventType.DONE_TODO;
-    const data = {updatedTodo:todo}
-
-
+    const event =
+      status == TodoStatus.DOING ? EventType.DOING_TODO : EventType.DONE_TODO;
+    const data = { updatedTodo: todo };
     return this.notificationService.notifyReceivers(
       team,
       actorId,
@@ -100,35 +97,36 @@ export class TodoService extends GenericService<Todo> {
     );
   }
 
-
-
   async findAllTodos(): Promise<Todo[]> {
     return this.todoRepo.find({
       relations: ['user', 'team'],
     });
   }
-    async findOneTodo(id: number){
-      return this.todoRepo.findOne({
-        where: { id },
-        relations: ['user', 'team'],
-      });
+  async findOneTodo(id: number) {
+    return this.todoRepo.findOne({
+      where: { id },
+      relations: ['user', 'team'],
+    });
+  }
+  async findTodoByTeam(
+    teamId: number,
+    userId?: number,
+    status?: TodoStatus,
+  ): Promise<Todo[]> {
+    const where: any = {
+      team: { id: teamId },
+    };
+
+    if (status) {
+      where.status = status;
     }
-     async findTodoByTeam(teamId: number,userId?:number, status?: TodoStatus): Promise<Todo[]> {
-  const where: any = {
-    team: { id: teamId },
-  };
+    if (userId) {
+      where.user = { id: userId };
+    }
 
-  if (status) {
-    where.status = status;
+    return this.todoRepo.find({
+      where,
+      relations: ['team', 'user'],
+    });
   }
-  if(userId){
-    where.user = { id: userId };
-  }
-
-  return this.todoRepo.find({
-    where,
-    relations: ['team', 'user'],
-  });
-}
-
 }

@@ -26,13 +26,15 @@ export class MembershipController {
   constructor(private readonly membershipService: MembershipService) {}
 
   @Post('members')
-  @ApiBody({schema:{
-    type:'object',
-    properties:{
-      code:{type:'string',example:'xxx'},
-    }
-  }})
-  @ApiResponse({type:JoinTeamResponseDto})
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string', example: 'xxx' },
+      },
+    },
+  })
+  @ApiResponse({ type: JoinTeamResponseDto })
   async joinTeam(
     @ConnectedUser() user: User,
     @Body(new ZodPipe(JoinTeamSchema, zodPipeType.HTTP))
@@ -70,15 +72,15 @@ export class MembershipController {
   }
 
   @Delete('teams/:teamId/members')
-  @ApiResponse({schema:{
-    type:'object',
-    properties:{
-      success:{type:'boolean',example:true},
-      message: {type:'string',example:'Successfully left the team'}
-
-
-    }
-  }})
+  @ApiResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean', example: true },
+        message: { type: 'string', example: 'Successfully left the team' },
+      },
+    },
+  })
   async leaveTeam(
     @ConnectedUser() user: User,
     @Param('teamId') teamId: number,
@@ -91,7 +93,7 @@ export class MembershipController {
   }
 
   @Get('teams/:teamId/members')
-  @ApiResponse({type:GetTeamMembersResponseDto})
+  @ApiResponse({ type: GetTeamMembersResponseDto })
   async getTeamMembers(
     @ConnectedUser() user: User,
     @Param('teamId') teamId: number,
