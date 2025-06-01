@@ -31,6 +31,13 @@ export class TodoController {
     constructor(private readonly todoService: TodoService) { }
 
 
+    @Get(':id')
+    @ApiResponse({type:Todo})
+    async getTodo(@Param('id',ParseIntPipe)id:number){
+        return await this.todoService.findOne(id)
+    }
+
+
     @Get('team/:teamId')
     @ApiResponse({type:[Todo]})
     async findByTeam(@Param('teamId', ParseIntPipe) teamId: number,
