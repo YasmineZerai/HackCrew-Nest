@@ -88,12 +88,13 @@ export class TodoService extends GenericService<Todo> {
 
     const message = `Todo "${todo.task}" status updated to "${status}".`;
     const event =status==TodoStatus.DOING?EventType.DOING_TODO:EventType.DONE_TODO;
+    const data = {updatedTodo:todo}
 
 
     return this.notificationService.notifyReceivers(
       team,
       actorId,
-      message,
+      data,
       message,
       event,
     );
