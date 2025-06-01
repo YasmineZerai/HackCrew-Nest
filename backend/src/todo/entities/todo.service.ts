@@ -37,7 +37,7 @@ export class TodoService extends GenericService<Todo> {
     const message = `Todo "${newTodo.task}" is created by "${user.username}" .`;
     const data = {newTodo:newTodo}
     const event = EventType.NEW_TODO;
-    this.notificationService.notifyReceivers(team,userId,data,message,event)
+    this.notificationService.notifyTeam(userId,data,message,event,team.id)
     return await this.todoRepo.save(newTodo)
 
   }
@@ -76,26 +76,20 @@ export class TodoService extends GenericService<Todo> {
     if (![TodoStatus.DOING, TodoStatus.DONE].includes(status) || !todo.team)
       return;
 
-    const team = await this.teamService.findOneBy({ id: todo.team.id }, [
-      'memberships',
-      'memberships.user',
-    ]);
-
-
-    if (!team?.memberships) return;
-
+    
 
 
     const message = `Todo "${todo.task}" status updated to "${status}".`;
     const event =status==TodoStatus.DOING?EventType.DOING_TODO:EventType.DONE_TODO;
 
 
-    return this.notificationService.notifyReceivers(
-      team,
+    return this.notificationService.notifyTeam(
       actorId,
       message,
       message,
       event,
+      todo.team.id,
+
     );
   }
 

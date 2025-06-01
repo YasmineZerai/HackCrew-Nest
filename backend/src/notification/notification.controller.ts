@@ -6,6 +6,7 @@ import { ConnectedUser } from '@src/auth/decorators/user.decorator';
 import axios from 'axios';
 import { TeamService } from '@src/team/team.service';
 import { AlertDto } from './dto/alert.dto';
+import { EventType } from '@src/enum/event-type.enum';
 
 
 @Controller('notification')
@@ -17,7 +18,7 @@ export class NotificationController {
     @Post('alertTeam/:id')
     async alertTeam(@Body() createAlertDto : AlertDto,@ConnectedUser() user :any,@Param('id') id :number){
         
-        await this.notificationService.notifyTeam(user.id,createAlertDto,id)
+        await this.notificationService.notifyTeam(user.id,null,createAlertDto.message,EventType.TEAM_ALERT,id)
 
         return 'team members successfully notified'
 

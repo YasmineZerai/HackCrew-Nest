@@ -24,14 +24,24 @@ export class NotificationService extends GenericService<Notification> {
     super(notificationRepository);
   }
 
-  async notifyTeam(userId: number, data: AlertDto, teamId: number) {
+  // async notifyTeam(userId: number, data: AlertDto, teamId: number) {
+  //   const team = await this.teamService.findOne(teamId);
+  //   return this.notifyReceivers(
+  //     team,
+  //     userId,
+  //     data.message,
+  //     data.message,
+  //     EventType.TEAM_ALERT,
+  //   );
+  // }
+    async notifyTeam(userId: number, data: any,message:string,event:EventType, teamId: number) {
     const team = await this.teamService.findOne(teamId);
     return this.notifyReceivers(
       team,
       userId,
-      data.message,
-      data.message,
-      EventType.TEAM_ALERT,
+      data,
+      message,
+      event,
     );
   }
 

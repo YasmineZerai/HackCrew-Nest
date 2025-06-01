@@ -114,11 +114,10 @@ export class RessourcesService extends GenericService<Ressource> {
   }
 
   async notifyTeamMembers(teamId:number,userId:number,newRessource:Partial<Ressource>){
-    const team = await this.teamService.findOne(teamId)
     const message = `Ressource  is created.`;
     const event = EventType.NEW_RESSOURCE
     const data = {newRessource:newRessource}
-    return  this.notificationService.notifyReceivers(team,userId,data,message,event)
+    return  this.notificationService.notifyTeam(userId,data,message,event,teamId)
 
   }
     async findAll(): Promise<Ressource[]> {
