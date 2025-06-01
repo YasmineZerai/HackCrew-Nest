@@ -1,9 +1,8 @@
 import { IsOptional, IsNumberString, IsIn } from 'class-validator';
 import { TodoStatus } from '@src/enum/todo-status.enum';
-import { ApiProperty } from '@nestjs/swagger';
-
+import { ApiPropertyOptional } from '@nestjs/swagger';
 export class TodoFilterDto {
-  @ApiProperty()
+  @ApiPropertyOptional({ enum: TodoStatus, enumName: 'TodoStatus' })
   @IsOptional()
   status?: TodoStatus;
 }
