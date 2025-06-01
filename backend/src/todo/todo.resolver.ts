@@ -21,8 +21,9 @@ export class TodoResolver {
 async getTodoByTeam(
   @Args('teamId', { type: () => Int }) teamId: number,
   @Args('status', { type: () => TodoStatus, nullable: true }) status?: TodoStatus,
+  @Args('userId',{type:()=>Int,nullable:true}) userId? : number
 ): Promise<Todo[]> {
-  return this.todoService.findTodoByTeam(teamId, status);
+  return this.todoService.findTodoByTeam(teamId,userId, status);
 }
 
 }
